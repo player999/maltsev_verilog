@@ -1,0 +1,552 @@
+$date
+	Thu May 30 03:06:25 2013
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module addition_tb $end
+$var wire 1 ! CLK $end
+$var wire 16 " IN0 [15:0] $end
+$var wire 16 # IN1 [15:0] $end
+$var wire 1 $ RD $end
+$var wire 16 % RES [15:0] $end
+$var wire 1 & RST $end
+$var wire 1 ' ST $end
+$var reg 1 ( rCLK $end
+$var reg 16 ) rIN0 [15:0] $end
+$var reg 16 * rIN1 [15:0] $end
+$var reg 1 + rRST $end
+$var reg 1 , rST $end
+$scope module op_o $end
+$var wire 1 ! CLK $end
+$var wire 16 - IN0 [15:0] $end
+$var wire 16 . IN1 [15:0] $end
+$var wire 16 / IN2 [15:0] $end
+$var wire 1 & RST $end
+$var wire 1 ' ST $end
+$var wire 1 0 rd_g $end
+$var wire 1 1 rd_h $end
+$var wire 16 2 res_g [15:0] $end
+$var wire 16 3 res_h [15:0] $end
+$var wire 1 4 st_h $end
+$var reg 16 5 CNT [15:0] $end
+$var reg 16 6 ITERATIONS [15:0] $end
+$var reg 1 7 RD $end
+$var reg 16 8 RES [15:0] $end
+$var reg 1 9 STold $end
+$var reg 1 : rd_g_old $end
+$var reg 1 ; rd_h_old $end
+$scope module g $end
+$var wire 1 ! CLK $end
+$var wire 16 < IN0 [15:0] $end
+$var wire 16 = IN1 [15:0] $end
+$var wire 1 & RST $end
+$var wire 1 ' ST $end
+$var reg 1 > RD $end
+$var reg 16 ? RES [15:0] $end
+$var reg 1 @ RF $end
+$var reg 1 A STold $end
+$upscope $end
+$scope module h $end
+$var wire 1 ! CLK $end
+$var wire 16 B IN0 [15:0] $end
+$var wire 16 C IN1 [15:0] $end
+$var wire 16 D IN2 [15:0] $end
+$var wire 1 1 RD $end
+$var wire 1 E RDi $end
+$var wire 16 F RES [15:0] $end
+$var wire 16 G RESi [15:0] $end
+$var wire 1 & RST $end
+$var wire 1 4 ST $end
+$scope module opi3 $end
+$var wire 1 ! CLK $end
+$var wire 16 H IN0 [15:0] $end
+$var wire 16 I IN1 [15:0] $end
+$var wire 16 J IN2 [15:0] $end
+$var wire 1 & RST $end
+$var wire 1 4 ST $end
+$var reg 1 K RD $end
+$var reg 16 L RES [15:0] $end
+$var reg 1 M RF $end
+$var reg 1 N STold $end
+$upscope $end
+$scope module soperation $end
+$var wire 1 ! CLK $end
+$var wire 16 O IN [15:0] $end
+$var wire 1 & RST $end
+$var wire 1 E ST $end
+$var reg 1 P RD $end
+$var reg 16 Q RES [15:0] $end
+$var reg 1 R RF $end
+$var reg 1 S STold $end
+$upscope $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+xS
+xR
+bx Q
+xP
+bx O
+xN
+xM
+bx L
+xK
+bx J
+b101 I
+b100 H
+bx G
+bx F
+xE
+bx D
+b101 C
+b100 B
+xA
+x@
+bx ?
+x>
+b101 =
+b100 <
+x;
+x:
+x9
+bx 8
+x7
+bx 6
+bx 5
+x4
+bx 3
+bx 2
+x1
+x0
+bx /
+b101 .
+b100 -
+0,
+1+
+b101 *
+b100 )
+0(
+0'
+1&
+bx %
+x$
+b101 #
+b100 "
+0!
+$end
+#5
+14
+0A
+1@
+1>
+10
+1M
+1K
+1E
+1R
+1P
+11
+b0 6
+x;
+x:
+09
+b0 5
+17
+1$
+1(
+1!
+#10
+0(
+0!
+#15
+1;
+1:
+1S
+1N
+1(
+1!
+0+
+0&
+#20
+0(
+0!
+#25
+04
+1A
+0@
+0>
+00
+19
+b101 6
+07
+0$
+1(
+1!
+1,
+1'
+#30
+0(
+0!
+#35
+b101 /
+b101 D
+b101 J
+0:
+09
+0N
+0A
+1@
+b101 ?
+b101 2
+1(
+1!
+0,
+0'
+#40
+0(
+0!
+#45
+14
+1>
+10
+1(
+1!
+#50
+0(
+0!
+#55
+1:
+b1 5
+b101 8
+b101 %
+0S
+1N
+0K
+0E
+0M
+1(
+1!
+#60
+0(
+0!
+#65
+1M
+b101 L
+b101 G
+b101 O
+1(
+1!
+#70
+0(
+0!
+#75
+04
+0;
+1S
+0P
+01
+0R
+1K
+1E
+1(
+1!
+#80
+0(
+0!
+#85
+0N
+1R
+b110 Q
+b110 3
+b110 F
+1(
+1!
+#90
+0(
+0!
+#95
+b110 /
+b110 D
+b110 J
+14
+1;
+b10 5
+b1 8
+b1 %
+1P
+11
+1(
+1!
+#100
+0(
+0!
+#105
+1N
+0K
+0E
+0M
+1(
+1!
+#110
+0(
+0!
+#115
+0S
+1M
+b110 L
+b110 G
+b110 O
+1(
+1!
+#120
+0(
+0!
+#125
+1K
+1E
+1(
+1!
+#130
+0(
+0!
+#135
+04
+0;
+1S
+0P
+01
+0R
+1(
+1!
+#140
+0(
+0!
+#145
+b111 /
+b111 D
+b111 J
+0N
+1R
+b111 Q
+b111 3
+b111 F
+1(
+1!
+#150
+0(
+0!
+#155
+14
+1;
+b11 5
+1P
+11
+1(
+1!
+#160
+0(
+0!
+#165
+1N
+0K
+0E
+0M
+1(
+1!
+#170
+0(
+0!
+#175
+0S
+1M
+b111 L
+b111 G
+b111 O
+1(
+1!
+#180
+0(
+0!
+#185
+1K
+1E
+1(
+1!
+#190
+0(
+0!
+#195
+04
+0;
+1S
+0P
+01
+0R
+1(
+1!
+#200
+0(
+0!
+#205
+b1000 /
+b1000 D
+b1000 J
+0N
+1R
+b1000 Q
+b1000 3
+b1000 F
+1(
+1!
+#210
+0(
+0!
+#215
+14
+1;
+b100 5
+1P
+11
+1(
+1!
+#220
+0(
+0!
+#225
+1N
+0K
+0E
+0M
+1(
+1!
+#230
+0(
+0!
+#235
+0S
+1M
+b1000 L
+b1000 G
+b1000 O
+1(
+1!
+#240
+0(
+0!
+#245
+1K
+1E
+1(
+1!
+#250
+0(
+0!
+#255
+04
+0;
+1S
+0P
+01
+0R
+1(
+1!
+#260
+0(
+0!
+#265
+b1001 /
+b1001 D
+b1001 J
+0N
+1R
+b1001 Q
+b1001 3
+b1001 F
+1(
+1!
+#270
+0(
+0!
+#275
+14
+1;
+b101 5
+1P
+11
+1(
+1!
+#280
+0(
+0!
+#285
+b101 /
+b101 D
+b101 J
+1N
+0K
+0E
+0M
+b0 6
+b1001 8
+b1001 %
+b0 5
+17
+1$
+1(
+1!
+#290
+0(
+0!
+#295
+0S
+1M
+b101 L
+b101 G
+b101 O
+1(
+1!
+#300
+0(
+0!
+#305
+1K
+1E
+1(
+1!
+#310
+0(
+0!
+#315
+0;
+1S
+0P
+01
+0R
+1(
+1!
+#320
+0(
+0!
+#325
+1R
+b110 Q
+b110 3
+b110 F
+1(
+1!
+#330
+0(
+0!
+#335
+1;
+1P
+11
+1(
+1!
