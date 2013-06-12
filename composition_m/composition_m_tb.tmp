@@ -1,0 +1,35 @@
+module composition_m_tb;
+	wire CLK;
+	reg rCLK;
+	wire RST;
+	reg rRST;
+	wire ST;
+	reg rST;
+	wire RD;
+	wire [%BUS_WIDTH-1:0] RES;
+%IN_WIRE
+%IN_REGISTER
+	
+	composition_m comp_m(RST, ST, CLK, RD, RES, %IN_PARAM);
+
+	assign CLK = rCLK;
+	assign ST = rST;
+	assign RST = rRST;
+%IN_ASSIGN
+
+	initial begin
+		$dumpfile("operation_i_tb.vcd");
+		$dumpvars;
+		rCLK = 0;
+		rRST = 1;
+		rST = 0;
+%IN_INIT
+		#15 rRST = 0;
+		#10 rST = 1;
+		#200 $finish;
+	end
+
+
+	always #5 rCLK = !rCLK;
+	
+endmodule

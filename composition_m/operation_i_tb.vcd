@@ -1,0 +1,352 @@
+$date
+	Mon Jun  3 01:17:29 2013
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module composition_m_foperation_i_bw16_inc3_si2_bw16_icnt3_crit2_tb $end
+$var wire 1 ! CLK $end
+$var wire 16 " IN0 [15:0] $end
+$var wire 16 # IN1 [15:0] $end
+$var wire 16 $ IN2 [15:0] $end
+$var wire 1 % RD $end
+$var wire 16 & RES [15:0] $end
+$var wire 1 ' RST $end
+$var wire 1 ( ST $end
+$var reg 1 ) rCLK $end
+$var reg 16 * rIN0 [15:0] $end
+$var reg 16 + rIN1 [15:0] $end
+$var reg 16 , rIN2 [15:0] $end
+$var reg 1 - rRST $end
+$var reg 1 . rST $end
+$scope module comp_m $end
+$var wire 1 ! CLK $end
+$var wire 16 / IN0 [15:0] $end
+$var wire 16 0 IN1 [15:0] $end
+$var wire 16 1 IN2 [15:0] $end
+$var wire 1 ' RST $end
+$var wire 1 ( ST $end
+$var wire 1 2 rd_f $end
+$var wire 16 3 res_f [15:0] $end
+$var reg 16 4 CNT [15:0] $end
+$var reg 1 5 RD $end
+$var reg 1 6 RDold_f $end
+$var reg 16 7 RES [15:0] $end
+$var reg 1 8 STold $end
+$var reg 1 9 st_f $end
+$var reg 1 : stf_f $end
+$scope module f $end
+$var wire 1 ! CLK $end
+$var wire 16 ; IN0 [15:0] $end
+$var wire 16 < IN1 [15:0] $end
+$var wire 16 = IN2 [15:0] $end
+$var wire 1 ' RST $end
+$var wire 1 > ST $end
+$var reg 1 ? RD $end
+$var reg 16 @ RES [15:0] $end
+$var reg 1 A RF $end
+$var reg 1 B STold $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+xB
+xA
+bx @
+x?
+x>
+bx =
+b1 <
+b0 ;
+x:
+x9
+x8
+bx 7
+x6
+x5
+bx 4
+bx 3
+x2
+b10 1
+b1 0
+b0 /
+0.
+1-
+b10 ,
+b1 +
+b0 *
+0)
+0(
+1'
+bx &
+x%
+b10 $
+b1 #
+b0 "
+0!
+$end
+#5
+0B
+1?
+12
+0:
+b0 4
+b0 =
+08
+15
+1%
+1)
+1!
+#10
+0)
+0!
+#15
+16
+1)
+1!
+0-
+0'
+#20
+0)
+0!
+#25
+1B
+18
+19
+1>
+05
+0%
+1)
+1!
+1.
+1(
+#30
+0)
+0!
+#35
+06
+1:
+0A
+0?
+02
+1)
+1!
+#40
+0)
+0!
+#45
+0B
+1A
+b0 @
+b0 3
+09
+0>
+0:
+1)
+1!
+#50
+0)
+0!
+#55
+16
+19
+1>
+b1 4
+b1 =
+b0 7
+b0 &
+15
+1%
+1?
+12
+1)
+1!
+#60
+0)
+0!
+#65
+1B
+1:
+1)
+1!
+#70
+0)
+0!
+#75
+06
+09
+0>
+0:
+0A
+0?
+02
+1)
+1!
+#80
+0)
+0!
+#85
+0B
+1A
+b1 @
+b1 3
+1)
+1!
+#90
+0)
+0!
+#95
+16
+19
+1>
+b10 4
+b10 =
+1?
+12
+1)
+1!
+#100
+0)
+0!
+#105
+1B
+1:
+1)
+1!
+#110
+0)
+0!
+#115
+06
+09
+0>
+0:
+0A
+0?
+02
+1)
+1!
+#120
+0)
+0!
+#125
+0B
+1A
+b10 @
+b10 3
+1)
+1!
+#130
+0)
+0!
+#135
+16
+19
+1>
+b11 4
+b11 =
+1?
+12
+1)
+1!
+#140
+0)
+0!
+#145
+1B
+1:
+1)
+1!
+#150
+0)
+0!
+#155
+06
+09
+0>
+0:
+0A
+0?
+02
+1)
+1!
+#160
+0)
+0!
+#165
+0B
+1A
+b11 @
+b11 3
+1)
+1!
+#170
+0)
+0!
+#175
+16
+19
+1>
+b100 4
+b100 =
+1?
+12
+1)
+1!
+#180
+0)
+0!
+#185
+1B
+1:
+1)
+1!
+#190
+0)
+0!
+#195
+06
+09
+0>
+0:
+0A
+0?
+02
+1)
+1!
+#200
+0)
+0!
+#205
+0B
+1A
+b100 @
+b100 3
+1)
+1!
+#210
+0)
+0!
+#215
+16
+19
+1>
+b101 4
+b101 =
+1?
+12
+1)
+1!
+#220
+0)
+0!
+#225
+1B
+1:
+1)
+1!

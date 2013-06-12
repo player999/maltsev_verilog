@@ -1,33 +1,29 @@
-module operation_i(RST, ST, CLK, RD, RES, %IN);
+module operation_s_bw16(RST, ST, CLK, RD, RES, IN);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH-1:0] RES;
+	output reg [16-1:0] RES;
+	input wire [16-1:0] IN;
 	reg STold;
 	reg RF;
-%IDEF
-
 	always @(posedge CLK) begin
 		if(RST == 1) begin
 			RD = 1;
+			RF = 1;
 		end else begin
 			if(RF == 1) begin
 				RD = 1;
 			end
 			if(RF == 0) begin
-				RES = %IRESULT;
+				RES = IN + 1;
 				RF = 1;
 			end
 			if(ST == 1 && STold == 0) begin
-                                RD = 0;
-				RF = 0;
+                                RF = 0;
+				RD = 0;
                         end
 		end
-		if(ST == 1) begin
-			STold = 1;
-		end else begin
-			STold = 0;
-		end
+		STold = ST;
 	end	
 endmodule

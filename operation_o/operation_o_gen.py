@@ -24,14 +24,14 @@ if __name__ == "__main__":
 	template = template.replace("%IN", in_list);
 	template = template.replace("%IDEF", idef);
 	template = template.replace("%BUS_WIDTH", str(bus_width));
-	template = template.replace("operation_o","operation_o_%s_%s"%(bus_width, input_count))
+	template = template.replace("operation_o","operation_o_bw%s_inc%s"%(bus_width, input_count))
 	out_file = open("operation_o_bw%s_inc%s.v"%(bus_width, input_count),"w");
 	out_file.write(template);
 	out_file.close();
 	
 	template = open("operation_o_tb.tmp", "r").read()
 	template = template.replace("%BUS_WIDTH", str(bus_width));
-	template = template.replace("operation_o","operation_o_%s_%s"%(bus_width, input_count))
+	template = template.replace("operation_o","operation_o_bw%s_inc%s"%(bus_width, input_count))
 	template = template.replace("%IN_WIRE", in_wire);
 	template = template.replace("%IN_REGISTER", in_register);
 	template = template.replace("%IN_ASSIGN", in_assign);

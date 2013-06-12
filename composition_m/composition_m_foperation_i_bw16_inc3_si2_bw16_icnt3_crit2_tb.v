@@ -1,4 +1,4 @@
-module operation_o_tb;
+module composition_m_foperation_i_bw16_inc3_si2_bw16_icnt3_crit2_tb;
 	wire CLK;
 	reg rCLK;
 	wire RST;
@@ -16,7 +16,7 @@ module operation_o_tb;
 	reg [15:0] rIN2;
 
 	
-	operation_i_bw16_inc3_si2 op_i(RST, ST, CLK, RD, RES, IN0, IN1, IN2);
+	composition_m_foperation_i_bw16_inc3_si2_bw16_icnt3_crit2 comp_m(RST, ST, CLK, RD, RES, IN0, IN1, IN2);
 
 	assign CLK = rCLK;
 	assign ST = rST;
@@ -27,7 +27,7 @@ module operation_o_tb;
 
 
 	initial begin
-		$dumpfile("operation_i_bw16_inc3_si2_tb.vcd");
+		$dumpfile("operation_i_tb.vcd");
 		$dumpvars;
 		rCLK = 0;
 		rRST = 1;
@@ -38,7 +38,7 @@ module operation_o_tb;
 
 		#15 rRST = 0;
 		#10 rST = 1;
-		#40 $finish;
+		#200 $finish;
 	end
 
 

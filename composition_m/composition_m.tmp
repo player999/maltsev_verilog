@@ -1,0 +1,43 @@
+module composition_m(RST, ST, CLK, RD, RES, %IN_LIST);
+	input wire RST;
+	input wire ST;
+	input wire CLK;
+	output reg RD;
+	output reg [%BUS_WIDTH-1:0] RES;
+	wire [%BUS_WIDTH-1:0] res_f;
+	reg [%BUS_WIDTH-1:0] CNT;
+	wire rd_f;
+	reg st_f;
+	reg RDold_f;
+	reg STold;
+	reg [%BUS_WIDTH-1:0] INv;
+%IN_DEF
+	%F_CLASS f(RST, st_f, CLK, rd_f, res_f, %INF_LIST);
+	
+	always @(posedge CLK) begin
+		if(RST == 1) begin
+			RD = 1;
+			STold = 0;
+			CNT = 0;
+		end else begin
+			
+			st_f = 0;
+			if(ST == 1 && STold == 0) begin
+				CNT = 0;
+				RD = 0;
+				st_f = 1;				
+			end
+
+			if(RDold_f == 0 && rd_f == 1) begin
+				if(res_f == 0) begin
+					RD = 1;
+					RES = res_f;
+				end
+				CNT = CNT + 1;
+				st_f = 1;
+			end
+		end
+		STold = ST;
+		RDold_f = rd_f;
+	end
+endmodule

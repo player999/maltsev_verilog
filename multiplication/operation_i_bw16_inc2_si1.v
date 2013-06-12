@@ -1,22 +1,25 @@
-module operation_i(RST, ST, CLK, RD, RES, %IN);
+module operation_i_bw16_inc2_si1(RST, ST, CLK, RD, RES, IN0, IN1);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH-1:0] RES;
+	output reg [16-1:0] RES;
 	reg STold;
 	reg RF;
-%IDEF
+	input wire [15:0] IN0;
+	input wire [15:0] IN1;
+
 
 	always @(posedge CLK) begin
 		if(RST == 1) begin
 			RD = 1;
+			RF = 1;
 		end else begin
 			if(RF == 1) begin
 				RD = 1;
 			end
 			if(RF == 0) begin
-				RES = %IRESULT;
+				RES = IN1;
 				RF = 1;
 			end
 			if(ST == 1 && STold == 0) begin
@@ -24,10 +27,6 @@ module operation_i(RST, ST, CLK, RD, RES, %IN);
 				RF = 0;
                         end
 		end
-		if(ST == 1) begin
-			STold = 1;
-		end else begin
-			STold = 0;
-		end
+		STold = ST;
 	end	
 endmodule
