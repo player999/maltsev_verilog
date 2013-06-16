@@ -58,6 +58,6 @@ if __name__ == "__main__":
     f = open("main_root.v",'w')
     f.write(fl)
     f.close()
-    f = open("main_root_tb.v",'w')
+    f = open("main_root_testbench.v",'w')
     f.write(tb)
     f.close()

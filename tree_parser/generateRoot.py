@@ -39,7 +39,7 @@ def generateRoot(tree, acc, bw):
     for ass in acc["start"]:
         assignments = assignments + "    %s\n"%(ass)
     assignments = assignments + "    assign RD = node%s_rd;\n"%(tree["id"])
-    assignments = assignments + "    assign node%s_res[%d:0] = RES[%d:0];\n"%(tree["id"], int(bw)-1, int(bw)-1)
+    assignments = assignments + "    assign RES[%d:0] = node%s_res[%d:0];\n"%(int(bw)-1, tree["id"], int(bw)-1)
     template = template.replace("%ASSIGNMENTS%", assignments)
     template = template.replace("%WIRES%", wires)
     template = template.replace("%BUS_WIDTH%", str(bw))
@@ -52,14 +52,12 @@ def generateRoot(tree, acc, bw):
     cnt = 5
     for arg in acc["wire"]:
         if isWireType("in", arg):
-            wire = re.findall("^wire.*node_(.*);", arg)
-            #print(wire)
-            #print(arg)
-            wire = 1
+            wire = re.findall("^.*(node.*);", arg)
+            wire = wire[0]
             input_wires = input_wires + "\twire [%d-1:0] %s;\n"%(bw, wire)
             input_regs = input_regs + "\treg [%d-1:0] r%s;\n"%(bw, wire) 
-            assign_wires = assign_wires + "\tassign %s = r%s;\n"%(arg, wire)
-            in_init = in_init + "\tr%s = %d;\n"%(arg, cnt)
+            assign_wires = assign_wires + "\tassign %s = r%s;\n"%(wire, wire)
+            in_init = in_init + "\tr%s = %d;\n"%(wire, cnt)
             cnt = cnt + 1
     
     template_tb = template_tb.replace("%INDEF%", input_wires + input_regs)
@@ -68,6 +66,7 @@ def generateRoot(tree, acc, bw):
     template_tb = template_tb.replace("%IN_ASSIGN%", assign_wires)
     template_tb = template_tb.replace("%SIM_TIME%", str(3000))
     template_tb = template_tb.replace("%IN_INIT%", in_init)    
+    template_tb = template_tb.replace("%BUS_WIDTH%", str(bw))
     return template, template_tb
     
      
