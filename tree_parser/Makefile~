@@ -1,0 +1,10 @@
+VERILOG=iverilog
+TARGET=root
+all: root
+
+root: 
+    iverilog &*.v
+    
+clean: 
+    rm *.v     
+

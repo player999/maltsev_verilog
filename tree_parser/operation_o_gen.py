@@ -37,7 +37,7 @@ def generate_o(bus_width, input_count, node_id="0"):
     template = template.replace("%IN_PARAM", in_list);
 
 
-    out_file = open("node%s_tb.v"%(node_id),"w");
+    out_file = open("node%s_operation_o_tb.v"%(node_id),"w");
     out_file.write(template);
     out_file.close();
 

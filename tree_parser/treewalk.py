@@ -2,6 +2,7 @@
 import pparser
 import generateRoot
 import operation_o_gen
+import operation_i_gen
 
 def treeWalk(tree, parentNode, accumulator, bw):
     accumulator = generateAccEntry(tree, accumulator, bw)
@@ -12,8 +13,11 @@ def treeWalk(tree, parentNode, accumulator, bw):
     return accumulator
 
 def generateNode(node, bw):
-    if node["name"] == "":
-        print("d")
+    if node["name"] == "o":
+        operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
+    elif node["name"] == "i":
+        print(node["arguments"])
+        operation_i_gen.generate_i(bw, len(node["arguments"]), node["static"][0], node["id"])
     else:
         operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
 
@@ -47,7 +51,7 @@ def generateAccEntry(node, accumulator, bw):
     return accumulator    
 
 if __name__ == "__main__":
-    line = "I(2,3;X,add(s(x), m(g(n), 5)),Z)"
+    line = "I(2,3;X,i(1;s(x),m(g(n),5)),Z)"
     tree = pparser.parseParentheses(line)
     accumulator = {}
     accumulator["start"] = []
