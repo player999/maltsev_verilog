@@ -1,0 +1,16 @@
+module root%ROOT_NODE_ID%(RST, ST, CLK, RD, RES, %IN%);
+    input wire RST;
+    input wire ST;
+    input wire CLK;
+%INPUT_DEFINITIONS%
+    output wire RD;
+    output wire [%BUS_WIDTH%-1:0] RES;
+
+%WIRES%
+
+%ASSIGNMENTS%
+
+%MODULES%
+
+endmodule
+

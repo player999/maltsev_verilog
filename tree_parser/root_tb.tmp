@@ -1,0 +1,35 @@
+
+module root_tb()
+    wire RST;
+    wire ST;
+    wire CLK;
+    wire RD;
+    wire RES;
+    reg rRST;
+    reg rST;
+    reg rCLK;
+%INDEF%
+    
+    root_%ROOT_NODE_ID% root(RST, ST, CLK, RD, RES, %IN%)
+
+    always #5 rCLK = !rCLK;
+
+%IN_ASSIGN%
+
+    initial begin
+        $dumpfile("root_tb.vcd");
+        $dumpvars;
+        rCLK = 0;
+        rRST = 1;
+        rST = 0;
+%IN_INIT%
+        #15 rRST = 0;
+        #10 rST = 1;
+        #10 rST = 0;
+        #%SIM_TIME% $finish;
+    end
+
+
+    always #5 rCLK = !rCLK;
+
+endmodule

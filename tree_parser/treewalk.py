@@ -1,26 +1,31 @@
 #!/usr/bin/python3
 import pparser
+import generateRoot
+import operation_o_gen
 
-def treeWalk(tree, parentNode, accumulator):
-    #print(tree)
-    accumulator = generateAccEntry(tree, accumulator)
+def treeWalk(tree, parentNode, accumulator, bw):
+    accumulator = generateAccEntry(tree, accumulator, bw)
+    generateNode(tree, bw)
     for leaf in tree["arguments"]:
         if isinstance(leaf, dict):
-            accumulator = treeWalk(leaf, tree, accumulator)
+            accumulator = treeWalk(leaf, tree, accumulator, bw)
     return accumulator
 
-def generateNode(node):
-    print(node)
+def generateNode(node, bw):
+    if node["name"] == "":
+        print("d")
+    else:
+        operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
 
-def generateAccEntry(node, accumulator):
+def generateAccEntry(node, accumulator, bw):
     if isinstance(node, str):
         return accumulator
     start_signal = "assign node%s_st = "%(str(node["id"]))
     module_inline = ""
     for i in range(0,len(node["arguments"])):
-        wire_line = "wire [%%BUS_WIDTH-1:0] node%s_in%d;"%(str(node["id"]), i)
+        wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_in%d;"%(str(node["id"]), i)
         if isinstance(node["arguments"][i], dict):
-            wire_line = "wire [%%BUS_WIDTH-1:0] node%s_res;"%((str(node["arguments"][i]["id"]))) 
+            wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_res;"%((str(node["arguments"][i]["id"]))) 
             rd_line = "wire node%s_rd;"%(str(node["arguments"][i]["id"]))
             start_signal = start_signal + "node%s_rd & "%(str(node["arguments"][i]["id"]))
             accumulator["wire"].extend([rd_line])
@@ -38,7 +43,7 @@ def generateAccEntry(node, accumulator):
     module_line = "node%s n%s(RST, %s, CLK, %s, %s, %s);"%(str(node["id"]), str(node["id"]), start_wire, ready_wire, res_wire, module_inline)
     accumulator["start"].extend([start_signal])
     accumulator["module"].extend([module_line])
-    accumulator["wire"].extend([start_wire])
+    accumulator["wire"].extend(["wire %s;"%(start_wire)])
     return accumulator    
 
 if __name__ == "__main__":
@@ -46,8 +51,13 @@ if __name__ == "__main__":
     tree = pparser.parseParentheses(line)
     accumulator = {}
     accumulator["start"] = []
-    accumulator["wire"] = []
     accumulator["module"] = []
-    acc = treeWalk(tree, None, accumulator)
-    print(acc)
-
+    accumulator["wire"] = ["wire [%d-1:0] node%s_res;"%(16, tree["id"])]
+    acc = treeWalk(tree, None, accumulator, 16)
+    (fl, tb) = generateRoot.generateRoot(tree, acc, 16)
+    f = open("main_root.v",'w')
+    f.write(fl)
+    f.close()
+    f = open("main_root_tb.v",'w')
+    f.write(tb)
+    f.close()
