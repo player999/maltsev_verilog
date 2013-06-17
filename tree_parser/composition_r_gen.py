@@ -13,13 +13,13 @@ def generate_r(bus_width, in_cnt, func_g, func_h, node_id):
 	max_in = int(in_cnt) - 1
 
 	template = open("composition_r.tmp", "r").read()
-	template = template.replace("%BUS_WIDTH", bus_width)
+	template = template.replace("%BUS_WIDTH%", bus_width)
 	template = template.replace("composition_r","node%s"%(node_id))
-	template = template.replace("%IN_LIST", in_list)
-	template = template.replace("%IN_DEF", in_def)
-	template = template.replace("%G_CLASS", func_g)
-	template = template.replace("%H_CLASS", func_h);
-	template = template.replace("%MAX_IN", "IN%d"%(max_in))
+	template = template.replace("%IN_LIST%", in_list)
+	template = template.replace("%IN_DEF%", in_def)
+	template = template.replace("%G_CLASS%", "root"+func_g)
+	template = template.replace("%H_CLASS%", "root"+func_h);
+	template = template.replace("%MAX_IN%", "IN%d"%(max_in))
 
 	out_file = open("node%s_composition_r.v"%(node_id),"w")
 	out_file.write(template)

@@ -15,18 +15,42 @@ def treeWalk(tree, parentNode, accumulator, bw):
     return accumulator
 
 def generateNode(node, bw):
-    if node["name"] == "o":
-        operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
-    elif node["name"] == "i":
-        operation_i_gen.generate_i(bw, len(node["arguments"]), node["static"][0], node["id"])
-    elif node["name"] == "s":
-        operation_s_gen.generate_s(bw, node["id"])
+	if node["name"] == "o":
+		operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
+	elif node["name"] == "i":
+		operation_i_gen.generate_i(bw, len(node["arguments"]), node["static"][0], node["id"])
+	elif node["name"] == "s":
+		operation_s_gen.generate_s(bw, node["id"])
 	elif node["name"] == "R":
 		g = node["static"][0]
 		h = node["static"][1]
-
-    else:
-        operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
+		accumulator = {}
+		accumulator["start"] = []
+		accumulator["module"] = []
+		accumulator["wire"] = ["wire [%d-1:0] node%s_res;"%(16, g["id"])]
+		gacc = treeWalk(g, None, accumulator, 16)
+		(flg, tbg) = generateRoot.generateRoot(g, gacc, 16)
+		f = open("root%s.v"%(g["id"], "w"))
+		f.write(flg)
+		f.close()
+		f = open("root%s_tb.v"%(g["id"], "w"))
+		f.write(tbg)
+		f.close()
+		accumulator = {}
+		accumulator["start"] = []
+		accumulator["module"] = []
+		accumulator["wire"] = ["wire [%d-1:0] node%s_res;"%(16, h["id"])]
+		hacc = treeWalk(h, None, accumulator, 16)
+		(flh, tbh) = generateRoot.generateRoot(h, hacc, 16)
+		f = open("root%s.v"%(h["id"], "w"))
+		f.write(flh)
+		f.close()
+		f = open("root%s_tb.v"%(h["id"], "w"))
+		f.write(tbh)
+		f.close()
+		composition_r_gen(bw, len(node["arguments"]), g["id"], h["id"], node["id"])
+	else:
+		operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
 
 def generateAccEntry(node, accumulator, bw):
     if isinstance(node, str):
