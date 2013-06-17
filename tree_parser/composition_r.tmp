@@ -1,0 +1,64 @@
+module composition_r(RST, ST, CLK, RD, RES, %IN_LIST);
+	input wire RST;
+	input wire ST;
+	input wire CLK;
+	output reg RD;
+	output reg [%BUS_WIDTH-1:0] RES;
+	wire [%BUS_WIDTH-1:0] res_g;
+	wire [%BUS_WIDTH-1:0] res_h;
+	reg [%BUS_WIDTH-1:0] CNT;
+	reg [%BUS_WIDTH-1:0] ITERATIONS;
+	wire rd_g;
+	wire rd_h;
+	wire st_h;
+	reg STold;
+	reg rd_g_old;
+	reg rd_h_old;
+	
+%IN_DEF
+	wire [%BUS_WIDTH-1:0] IN2;
+	
+	%G_CLASS g(RST, ST, CLK, rd_g, res_g, %IN_LIST);
+	%H_CLASS h(RST, st_h, CLK, rd_h, res_h, %IN_LIST, IN2);
+	//g, h
+	
+	assign st_h = CNT?rd_h:rd_g;
+	assign IN2[%BUS_WIDTH-1:0] = (CNT[%BUS_WIDTH-1:0] > 1)?res_h[%BUS_WIDTH-1:0]:res_g[%BUS_WIDTH-1:0];
+
+	always @(posedge CLK) begin
+		if(RST == 1) begin
+			RD = 1;
+			CNT = 0;
+			STold = 0;
+			rd_g_old = 0;
+			rd_h_old = 0;
+			ITERATIONS = 0;
+		end else begin
+			if(ITERATIONS == CNT) begin
+				RD = 1;
+				CNT = 0;
+				RES = res_h;
+				ITERATIONS = 0;
+			end
+			if(RD == 0) begin
+				
+				if(rd_g == 1 && rd_g_old == 0 && CNT == 0) begin
+					RES = res_g;
+					CNT = CNT + 1;
+				end
+				if(rd_h == 1 && rd_h_old == 0) begin
+					RES = rd_h;
+					CNT = CNT + 1;
+				end
+					
+			end
+			if(ST == 1 && STold == 0) begin
+				RD = 0;
+				ITERATIONS = %MAX_IN;
+			end
+		end
+		STold = ST;
+		rd_g_old = rd_g;
+		rd_h_old = rd_h;
+	end
+endmodule

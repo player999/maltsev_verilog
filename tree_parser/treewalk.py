@@ -4,6 +4,7 @@ import generateRoot
 import operation_o_gen
 import operation_i_gen
 import operation_s_gen
+import composition_r_gen
 
 def treeWalk(tree, parentNode, accumulator, bw):
     accumulator = generateAccEntry(tree, accumulator, bw)
@@ -20,6 +21,10 @@ def generateNode(node, bw):
         operation_i_gen.generate_i(bw, len(node["arguments"]), node["static"][0], node["id"])
     elif node["name"] == "s":
         operation_s_gen.generate_s(bw, node["id"])
+	elif node["name"] == "R":
+		g = node["static"][0]
+		h = node["static"][1]
+
     else:
         operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
 
