@@ -16,10 +16,10 @@ module composition_r(RST, ST, CLK, RD, RES, %IN_LIST%);
 	reg rd_h_old;
 	
 %IN_DEF%
-	wire [%BUS_WIDTH-1:0] IN2;
+	wire [%BUS_WIDTH%-1:0] IN2;
 	
-	%G_CLASS% g(RST, ST, CLK, rd_g, res_g, %IN_LIST);
-	%H_CLASS% h(RST, st_h, CLK, rd_h, res_h, %IN_LIST, IN2);
+	%G_CLASS% g(RST, ST, CLK, rd_g, res_g, %IN_LIST%);
+	%H_CLASS% h(RST, st_h, CLK, rd_h, res_h, %IN_LIST%, %MAX_IN%);
 	//g, h
 	
 	assign st_h = CNT?rd_h:rd_g;
@@ -54,7 +54,7 @@ module composition_r(RST, ST, CLK, RD, RES, %IN_LIST%);
 			end
 			if(ST == 1 && STold == 0) begin
 				RD = 0;
-				ITERATIONS = %MAX_IN;
+				ITERATIONS = %MAX_IN%;
 			end
 		end
 		STold = ST;

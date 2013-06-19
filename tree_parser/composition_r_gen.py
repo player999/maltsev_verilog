@@ -7,19 +7,19 @@ def generate_r(bus_width, in_cnt, func_g, func_h, node_id):
 	print(int(in_cnt))
 	for i in range(0, int(in_cnt)):
 		in_list += "IN%d, "%(i)
-		in_def += "\tinput wire [%s-1:0] IN%d;\n"%(bus_width, i)
+		in_def += "\tinput wire [%s-1:0] IN%d;\n"%(str(bus_width), i)
 		
 	in_list = in_list[0:-2]
-	max_in = int(in_cnt) - 1
+	max_in = int(in_cnt)
 
 	template = open("composition_r.tmp", "r").read()
-	template = template.replace("%BUS_WIDTH%", bus_width)
+	template = template.replace("%BUS_WIDTH%", str(bus_width))
 	template = template.replace("composition_r","node%s"%(node_id))
 	template = template.replace("%IN_LIST%", in_list)
 	template = template.replace("%IN_DEF%", in_def)
 	template = template.replace("%G_CLASS%", "root"+func_g)
 	template = template.replace("%H_CLASS%", "root"+func_h);
-	template = template.replace("%MAX_IN%", "IN%d"%(max_in))
+	template = template.replace("%MAX_IN%", "IN%d"%(max_in-1))
 
 	out_file = open("node%s_composition_r.v"%(node_id),"w")
 	out_file.write(template)
@@ -31,4 +31,4 @@ if __name__ == "__main__":
 	func_g = argv[3];
 	func_h = argv[4];
 	
-	generate_r(bus_width, in_cnt, func_g, func_h, "0")
+	generate_r(int(bus_width), in_cnt, func_g, func_h, "0")
