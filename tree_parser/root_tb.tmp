@@ -17,7 +17,6 @@ module root_tb();
     assign RST = rRST;
     assign ST = rST;
 
-
     initial begin
         $dumpfile("root_tb.vcd");
         $dumpvars;
@@ -30,7 +29,6 @@ module root_tb();
         #10 rST = 0;
         #%SIM_TIME% $finish;
     end
-
 
     always #5 rCLK = !rCLK;
 

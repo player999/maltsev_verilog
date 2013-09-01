@@ -86,4 +86,4 @@ module composition_r_goperation_i_bw16_inc2_si1_haddition_func_h_bw_16_icnt2(RST
 		rd_g_old = rd_g;
 		rd_h_old = rd_h;
 	end
-endmodule
+ndmodule

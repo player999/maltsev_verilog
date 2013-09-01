@@ -1,0 +1,30 @@
+module root775654(RST, ST, CLK, RD, RES, node775654_in1, node516616_in0, node516616_in1);
+    input wire RST;
+    input wire ST;
+    input wire CLK;
+    input wire [16-1:0] node775654_in1;
+    input wire [16-1:0] node516616_in0;
+    input wire [16-1:0] node516616_in1;
+
+    output wire RD;
+    output wire [16-1:0] RES;
+
+    wire [16-1:0] node775654_res;
+    wire node516616_rd;
+    wire [16-1:0] node516616_res;
+    wire node775654_st;
+    wire node516616_st;
+
+
+    assign node775654_st = node516616_rd;
+    assign node516616_st = ST;
+    assign RD = node775654_rd;
+    assign RES[15:0] = node775654_res[15:0];
+
+
+    node775654 n775654(RST, node775654_st, CLK, node775654_rd, node775654_res, node516616_res, node775654_in1);
+    node516616 n516616(RST, node516616_st, CLK, node516616_rd, node516616_res, node516616_in0, node516616_in1);
+
+
+endmodule
+

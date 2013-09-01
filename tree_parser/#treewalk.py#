@@ -33,7 +33,7 @@ def treeWalk(tree, parentNode, accumulator, graph, bw):
 		else:
 			graph.extend(["%s->%s"%(leaf, tree["id"])])
 	return accumulator, graph
-
+1
 def generateNode(node, bw):
 	if node["name"] == "o":
 		operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
@@ -64,6 +64,7 @@ def generateNode(node, bw):
 		accumulatorh["start"] = []
 		accumulatorh["module"] = []
 		accumulatorh["wire"] = ["wire [%d-1:0] node%s_res;"%(16, tree_h["id"])]
+		#tree_h["arguments"].extend(["wheezy"])
 		graph = []
 		hacc, graph = treeWalk(tree_h, None, accumulatorh, graph, 16)
 		(flh, tbh) = generateRoot.generateRoot(tree_h, hacc, 16)
@@ -84,8 +85,7 @@ def generateAccEntry(node, accumulator, bw):
 	start_signal = "assign node%s_st = "%(str(node["id"]))
 	module_inline = ""
 	for i in range(0,len(node["arguments"])):
-		#wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_in%d;"%(str(node["id"]), i)
-		wire_line = "wire [%%BUS_WIDTH%%-1:0] %s;"%(str(node["arguments"][i]))
+		wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_in%d;"%(str(node["id"]), i)
 		if isinstance(node["arguments"][i], dict):
 			wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_res;"%((str(node["arguments"][i]["id"]))) 
 			rd_line = "wire node%s_rd;"%(str(node["arguments"][i]["id"]))
@@ -93,8 +93,7 @@ def generateAccEntry(node, accumulator, bw):
 			accumulator["wire"].extend([rd_line])
 			module_inline = module_inline + "node%s_res, "%((str(node["arguments"][i]["id"])))
 		else:
-			#module_inline = module_inline + "node%s_in%d, "%(str(node["id"]), i)
-			module_inline = module_inline + "%s, "%(str(node["arguments"][i]))
+			module_inline = module_inline + "node%s_in%d, "%(str(node["id"]), i)
 		accumulator["wire"].extend([wire_line])
 	start_signal = start_signal[:-3] + ";"
 	if start_signal[-3:] == "st;":
@@ -110,14 +109,20 @@ def generateAccEntry(node, accumulator, bw):
 	return accumulator    
 
 if __name__ == "__main__":
-	line1 = "I(2,3;X,i(1;s(x),m(g(n),5)),Z)"
-	#line2 = "R(i(0;x,y),i(0;s(x),y);x,y)"
-	line3 = "mul(x,y)"
-	line4 = "R(i(0;x,y),i(0;s(x),y,z);x,y)"
-	line5 = "add(x,y)"
-	tree = pparser.parseParentheses(line3)
+	#line = "I(2,3;X,i(1;s(x),m(g(n),5)),Z)"
+	#line = "R(i(0;x,y),i(0;s(x),y);x,y)"
+	line = "add(x,y)"
+	tree = pparser.parseParentheses(line)
 	accumulator = {}
-	accumulator["start"] = []
+
+
+
+
+
+
+
+
+	accumulator["start"] = []2
 	accumulator["module"] = []
 	accumulator["wire"] = ["wire [%d-1:0] node%s_res;"%(16, tree["id"])]
 	graph = []
