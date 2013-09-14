@@ -3,55 +3,64 @@ import re
 import random
 
 def parseParentheses(string):
-    retval = []
-    random.seed()
+	retval = []
+	random.seed()
 #Check validity
-    if len(re.findall("\(", string)) != len(re.findall("\)", string)):
-        return retval
+	if len(re.findall("\(", string)) != len(re.findall("\)", string)):
+		return retval
 #Preprocess
-    for i in range(0,len(string)-2):
-        if string[i] == ' ':
-            string = string[:i] + string[i+1:] 
+	for i in range(0,len(string)-2):
+		if string[i] == ' ':
+			string = string[:i] + string[i+1:] 
 #Parose
-    retval = parseExp(string)
-    return retval
+	retval = parseExp(string)
+	return retval
 
 def parseExp(string):
-    arguments = re.search('\(.*\)', string)
-    arguments = arguments.group(0)
-    arguments = arguments[1:-1]
-    function_name = re.search('.*?\(', string)
-    function_name = function_name.group(0)
-    function_name = function_name[0:-1]
-    splitted_arguments = []
-    static_arguments = []
-    depth = 0
-    line = ""
-    for i in arguments:
-        if i == '(':
-            depth = depth + 1
-        if i == ')':
-            depth = depth - 1
-        line = line + i
-        if depth == 0:
-            if i == ';' or i == ',':
-                splitted_arguments.extend([line[:-1]])
-                if i == ';':
-                    static_arguments = splitted_arguments
-                    splitted_arguments = []
-                line = ""
-    splitted_arguments.extend([line])
-    root = {}
-    root["name"] = function_name
-    root["id"] = str(int(99999 + random.random() * 900000))
-    root["arguments"] = splitted_arguments
-    root["static"] = static_arguments
-    for i in range(0, len(root["arguments"])):
-        arg = root["arguments"][i]
-        if len(re.findall("\(", arg)) > 0:
-            root["arguments"][i] = parseExp(arg)
-    return root
+	arguments = re.search('\(.*\)', string)
+	arguments = arguments.group(0)
+	arguments = arguments[1:-1]
+	function_name = re.search('.*?\(', string)
+	function_name = function_name.group(0)
+	function_name = function_name[0:-1]
+	splitted_arguments = []
+	static_arguments = []
+	depth = 0
+	line = ""
+	for i in arguments:
+		if i == '(':
+			depth = depth + 1
+		if i == ')':
+			depth = depth - 1
+		line = line + i
+		if depth == 0:
+			if i == ';' or i == ',':
+				splitted_arguments.extend([line[:-1]])
+				if i == ';':
+					static_arguments = splitted_arguments
+					splitted_arguments = []
+				line = ""
+	splitted_arguments.extend([line])
+	root = {}
+	root["name"] = function_name
+	root["id"] = str(int(99999 + random.random() * 900000))
+	root["arguments"] = splitted_arguments
+	root["static"] = static_arguments
+	for i in range(0, len(root["arguments"])):
+		arg = root["arguments"][i]
+		root["arguments"][i] = {}
+		if len(re.findall("\(", arg)) > 0:
+			root["arguments"][i]["path"] = parseExp(arg)
+			if isinstance(root["arguments"][i]["path"], dict):
+				root["arguments"][i]["wire"] = "wire%s-%s-%d"%(root["id"], root["arguments"][i]["path"]["id"], i)
+				root["arguments"][i]["no"] = i;
+		else:
+			root["arguments"][i]["path"] = arg;
+			root["arguments"][i]["wire"] = arg;
+			root["arguments"][i]["no"] = i;
+
+	return root
 if __name__ == '__main__':
-    teststring = "I(2,3;X,add(s(x), m(g(n), 5)),Z)"
-    res = parseParentheses(teststring)
-    print(res)
+	teststring = "I(2,3;X,add(s(x), m(g(n), 5)),Z)"
+	res = parseParentheses(teststring)
+	print(res)
