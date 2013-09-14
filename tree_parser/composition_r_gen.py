@@ -1,14 +1,15 @@
 #!/usr/bin/python3
 from sys import argv
 
-def generate_r(bus_width, in_cnt, func_g, func_h, node_id):
+def generate_r(bus_width, inputs, func_g, func_h, node_id):
 	in_list = ""
 	in_def = ""
-	for i in range(0, int(in_cnt)):
-		in_list += "IN%d, "%(i)
-		in_def += "\tinput wire [%s-1:0] IN%d;\n"%(str(bus_width), i)		
+	print(inputs)
+	for i in range(0, len(inputs)-1):
+		in_list += "%s, "%(inputs[i])
+		in_def += "\tinput wire [%s-1:0] %s;\n"%(str(bus_width), inputs[i])		
 	in_list = in_list[0:-2]
-	max_in = int(in_cnt)
+	max_in = len(inputs)
 	template = open("composition_r.tmp", "r").read()
 	template = template.replace("%BUS_WIDTH%", str(bus_width))
 	template = template.replace("composition_r","node%s"%(node_id))
@@ -16,8 +17,8 @@ def generate_r(bus_width, in_cnt, func_g, func_h, node_id):
 	template = template.replace("%IN_DEF%", in_def)
 	template = template.replace("%G_CLASS%", "root"+func_g)
 	template = template.replace("%H_CLASS%", "root"+func_h);
-	template = template.replace("%MAX_IN%", "IN%d"%(max_in-1))
-	template = template.replace("%ADDITIONAL_IN%", "IN%d"%(max_in))
+	template = template.replace("%MAX_IN%", "%s"%(inputs[-2]))
+	template = template.replace("%ADDITIONAL_IN%", "%s"%(inputs[-1]))
 
 	out_file = open("node%s_composition_r.v"%(node_id),"w")
 	out_file.write(template)

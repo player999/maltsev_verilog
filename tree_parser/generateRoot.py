@@ -34,6 +34,7 @@ def generateRoot(tree, acc, bw):
 	template = open("root.tmp", "r").read()
 	template = template.replace("%ROOT_NODE_ID%", tree["id"]);
 	wires = []
+	print(acc["wire"])
 	for i in range(0,len(acc["wire"])):
 		if acc["wire"][i] not in wires:
 			wires.extend([acc["wire"][i]]) 

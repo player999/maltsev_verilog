@@ -17,6 +17,29 @@ def drawGraph(graph, name):
 	p = subprocess.Popen(arguments, stdin=subprocess.PIPE)
 	p.stdin.write(line.encode('utf-8'))
 	p.stdin.close()
+
+def collect_inputs(root):
+	inputs = []
+	for i in range(0, len(root["arguments"])):
+		if isinstance(root["arguments"][i], str):
+			inputs.extend([root["arguments"][i]])
+		else:
+			inputs.extend(collect_inputs(root["arguments"][i]))
+	in_list = []
+	for i in range(0,len(inputs)):
+		if inputs[i] not in in_list:
+			in_list.extend([inputs[i]])
+	return in_list
+
+def arrange_inputs(inputs, arguments):
+	arranged_list = []
+	for i in range(0,len(inputs)):
+		if (inputs[i] not in arranged_list) and (inputs [i] not in arguments):
+			arranged_list.extend([inputs[i]])
+	for i in range(0,len(arguments)):
+		if isinstance(arguments[i],str):
+			arranged_list.extend([arguments[i]])
+
 def treeWalk(tree, parentNode, accumulator, graph, bw):
 	if isinstance(tree, dict):
 		tree = primitivelib.checklib(tree)
@@ -74,7 +97,9 @@ def generateNode(node, bw):
 		f = open("root%s_tb.v"%(tree_h["id"]), "w")
 		f.write(tbh)
 		f.close()
-		composition_r_gen.generate_r(bw, len(node["arguments"]), tree_g["id"], tree_h["id"], node["id"])
+		total_inputs = collect_inputs(tree_h)
+		arrange_inputs(total_inputs, node["arguments"])
+		composition_r_gen.generate_r(bw, total_inputs, tree_g["id"], tree_h["id"], node["id"])
 	else:
 		operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
 
@@ -84,7 +109,6 @@ def generateAccEntry(node, accumulator, bw):
 	start_signal = "assign node%s_st = "%(str(node["id"]))
 	module_inline = ""
 	for i in range(0,len(node["arguments"])):
-		#wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_in%d;"%(str(node["id"]), i)
 		wire_line = "wire [%%BUS_WIDTH%%-1:0] %s;"%(str(node["arguments"][i]))
 		if isinstance(node["arguments"][i], dict):
 			wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_res;"%((str(node["arguments"][i]["id"]))) 
@@ -93,7 +117,6 @@ def generateAccEntry(node, accumulator, bw):
 			accumulator["wire"].extend([rd_line])
 			module_inline = module_inline + "node%s_res, "%((str(node["arguments"][i]["id"])))
 		else:
-			#module_inline = module_inline + "node%s_in%d, "%(str(node["id"]), i)
 			module_inline = module_inline + "%s, "%(str(node["arguments"][i]))
 		accumulator["wire"].extend([wire_line])
 	start_signal = start_signal[:-3] + ";"
@@ -111,11 +134,12 @@ def generateAccEntry(node, accumulator, bw):
 
 if __name__ == "__main__":
 	line1 = "I(2,3;X,i(1;s(x),m(g(n),5)),Z)"
-	#line2 = "R(i(0;x,y),i(0;s(x),y);x,y)"
+	line2 = "R(i(0;x,y),i(0;s(x),y);x,y)"
 	line3 = "mul(x,y)"
 	line4 = "R(i(0;x,y),i(0;s(x),y,z);x,y)"
 	line5 = "add(x,y)"
-	tree = pparser.parseParentheses(line3)
+	line6 = "add(x,mul(y,z))"
+	tree = pparser.parseParentheses(line6)
 	accumulator = {}
 	accumulator["start"] = []
 	accumulator["module"] = []
