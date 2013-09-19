@@ -1,0 +1,2 @@
+mul	multiply
+add	addition

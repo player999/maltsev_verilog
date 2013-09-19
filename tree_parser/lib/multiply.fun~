@@ -1,0 +1,38 @@
+mul	2	0	"no"ne
+{
+  "name":"R",
+  "id":"%ID1%",
+  "static":[
+    {
+      "name":"o",
+      "id":"%ID2%",
+      "static":["0"],
+      "arguments":[
+        {"no":0, "value":%IN0%},
+        {"no":1, "value":%IN1%}
+      ]
+    },
+    {
+      "name":"i",
+      "id":"%ID3%",
+      "static":["2"],
+      "arguments":[
+        {"no":0, "value":%IN0%},
+        {"no":1, "value":%IN1%},
+        {"no":2, "value":{
+          "name":"add",
+          "id":"%ID4%",
+          "static":[],
+          "arguments":[
+            {"in":0, "value":"IN2"},
+            {"in":1, "value":%IN0%}
+          ]
+        }
+      ]
+    }
+  ],
+  "arguments":[
+     {"in":0, "value":%IN0%}
+     {"in":1, "value":%IN1%}
+  ]  
+}

@@ -21,8 +21,8 @@ def drawGraph(graph, name):
 def collect_inputs(root):
 	inputs = []
 	for i in range(0, len(root["arguments"])):
-		if isinstance(root["arguments"][i], str):
-			inputs.extend([root["arguments"][i]])
+		if isinstance(root["arguments"][i]["path"], str):
+			inputs.extend([root["arguments"][i]["path"]])
 		else:
 			inputs.extend(collect_inputs(root["arguments"][i]))
 	in_list = []
@@ -41,7 +41,7 @@ def arrange_inputs(inputs, arguments):
 			arranged_list.extend([arguments[i]])
 
 def treeWalk(tree, parentNode, accumulator, graph, bw):
-	if isinstance(tree, dict):
+	if isinstance(tree["path"], dict):
 		tree = primitivelib.checklib(tree)
 		accumulator = generateAccEntry(tree, accumulator, bw)
 		generateNode(tree, bw)
@@ -51,22 +51,22 @@ def treeWalk(tree, parentNode, accumulator, graph, bw):
 	else:
 		graph.extend(["%s->%s"%(tree["id"], parentNode["id"])])
 	for leaf in tree["arguments"]:	
-		if isinstance(leaf, dict):
+		if isinstance(leaf["path"], dict):
 			accumulator, graph = treeWalk(leaf, tree, accumulator, graph, bw)
 		else:
 			graph.extend(["%s->%s"%(leaf, tree["id"])])
 	return accumulator, graph
 
 def generateNode(node, bw):
-	if node["name"] == "o":
-		operation_o_gen.generate_o(bw, len(node["arguments"]), node["id"])
-	elif node["name"] == "i":
-		operation_i_gen.generate_i(bw, len(node["arguments"]), node["static"][0], node["id"])
-	elif node["name"] == "s":
+	if node["path"]["name"] == "o":
+		operation_o_gen.generate_o(bw, len(node["path"]["arguments"]), node["path"]["id"])
+	elif node["path"]["name"] == "i":
+		operation_i_gen.generate_i(bw, len(node["path"]["arguments"]), node["path"]["static"][0], node["path"]["id"])
+	elif node["path"]["name"] == "s":
 		operation_s_gen.generate_s(bw, node["id"])
-	elif node["name"] == "R":
-		g = node["static"][0]
-		h = node["static"][1]
+	elif node["path"]["name"] == "R":
+		g = node["path"]["static"][0]
+		h = node["path"]["static"][1]
 		tree_g = pparser.parseParentheses(g)
 		tree_h = pparser.parseParentheses(h)
 		accumulatorg = {}
@@ -106,27 +106,27 @@ def generateNode(node, bw):
 def generateAccEntry(node, accumulator, bw):
 	if isinstance(node, str):
 		return accumulator
-	start_signal = "assign node%s_st = "%(str(node["id"]))
+	start_signal = "assign node%s_st = "%(str(node["path"]["id"]))
 	module_inline = ""
-	for i in range(0,len(node["arguments"])):
-		wire_line = "wire [%%BUS_WIDTH%%-1:0] %s;"%(str(node["arguments"][i]))
-		if isinstance(node["arguments"][i], dict):
-			wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_res;"%((str(node["arguments"][i]["id"]))) 
-			rd_line = "wire node%s_rd;"%(str(node["arguments"][i]["id"]))
-			start_signal = start_signal + "node%s_rd & "%(str(node["arguments"][i]["id"]))
+	for i in range(0,len(node["path"]["arguments"])):
+		wire_line = "wire [%%BUS_WIDTH%%-1:0] %s;"%(str(node["path"]["arguments"][i]["wire"]))
+		if isinstance(node["path"]["arguments"][i]["path"], dict):
+			wire_line = "wire [%%BUS_WIDTH%%-1:0] node%s_res;"%((str(node["path"]["arguments"][i]["path"]["id"]))) 
+			rd_line = "wire node%s_rd;"%(str(node["path"]["arguments"][i]["path"]["id"]))
+			start_signal = start_signal + "node%s_rd & "%(str(node["path"]["arguments"][i]["path"]["id"]))
 			accumulator["wire"].extend([rd_line])
-			module_inline = module_inline + "node%s_res, "%((str(node["arguments"][i]["id"])))
+			module_inline = module_inline + "node%s_res, "%((str(node["path"]["arguments"][i]["path"]["id"])))
 		else:
-			module_inline = module_inline + "%s, "%(str(node["arguments"][i]))
+			module_inline = module_inline + "%s, "%(str(node["path"]["arguments"][i]["wire"]))
 		accumulator["wire"].extend([wire_line])
 	start_signal = start_signal[:-3] + ";"
 	if start_signal[-3:] == "st;":
 		start_signal = start_signal[:-1] + " = ST;"
 	module_inline = module_inline[:-2]
-	start_wire = "node%s_st"%(str(node["id"]))
-	ready_wire = "node%s_rd"%(str(node["id"]))
-	res_wire  = "node%s_res"%(str(node["id"]))
-	module_line = "node%s n%s(RST, %s, CLK, %s, %s, %s);"%(str(node["id"]), str(node["id"]), start_wire, ready_wire, res_wire, module_inline)
+	start_wire = "node%s_st"%(str(node["path"]["id"]))
+	ready_wire = "node%s_rd"%(str(node["path"]["id"]))
+	res_wire  = "node%s_res"%(str(node["path"]["id"]))
+	module_line = "node%s n%s(RST, %s, CLK, %s, %s, %s);"%(str(node["path"]["id"]), str(node["path"]["id"]), start_wire, ready_wire, res_wire, module_inline)
 	accumulator["start"].extend([start_signal])
 	accumulator["module"].extend([module_line])
 	accumulator["wire"].extend(["wire %s;"%(start_wire)])
@@ -145,7 +145,7 @@ if __name__ == "__main__":
 	accumulator["module"] = []
 	accumulator["wire"] = ["wire [%d-1:0] node%s_res;"%(16, tree["id"])]
 	graph = []
-	acc,graph = treeWalk(tree, None, accumulator, graph, 16)
+	acc,graph = treeWalk({"path":tree}, None, accumulator, graph, 16)
 	drawGraph(graph, "root")
 	(fl, tb) = generateRoot.generateRoot(tree, acc, 16)
 	f = open("main_root.v",'w')

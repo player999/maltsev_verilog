@@ -1,4 +1,4 @@
-module root%ROOT_NODE_ID%(RST, ST, CLK, RD, RES, %IN%);
+module root_%ROOT_NAME%%ROOT_NODE_ID%(RST, ST, CLK, RD, RES, %IN%);
     input wire RST;
     input wire ST;
     input wire CLK;

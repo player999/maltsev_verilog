@@ -50,17 +50,16 @@ def parseExp(string):
 		arg = root["arguments"][i]
 		root["arguments"][i] = {}
 		if len(re.findall("\(", arg)) > 0:
-			root["arguments"][i]["path"] = parseExp(arg)
-			if isinstance(root["arguments"][i]["path"], dict):
-				root["arguments"][i]["wire"] = "wire%s-%s-%d"%(root["id"], root["arguments"][i]["path"]["id"], i)
+			root["arguments"][i]["value"] = parseExp(arg)
+			if isinstance(root["arguments"][i]["value"], dict):
 				root["arguments"][i]["no"] = i;
 		else:
-			root["arguments"][i]["path"] = arg;
-			root["arguments"][i]["wire"] = arg;
+			root["arguments"][i]["value"] = arg;
 			root["arguments"][i]["no"] = i;
 
 	return root
 if __name__ == '__main__':
-	teststring = "I(2,3;X,add(s(x), m(g(n), 5)),Z)"
-	res = parseParentheses(teststring)
+	teststring1 = "I(2,3;X,add(s(x), m(g(n), 5)),Z)"
+	teststring2 = "add(mul(X,Y),Z)"
+	res = parseParentheses(teststring2)
 	print(res)
