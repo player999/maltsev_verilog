@@ -1,9 +1,12 @@
 #!/usr/bin/python3
+#-*- tab-width:4 -*-
+
 import re
 import pparser
 import primitivelib
+import os
 from configs import *
-
+		
 def makeInputWireList(root_node, input_list):
 	for arg in root_node["arguments"]:
 		if isinstance(arg["value"], str):
@@ -19,13 +22,14 @@ def makeInputWireList(root_node, input_list):
 	return input_list
 
 def makeObjectInterconnectionList(node, node_list):
-	node_list.extend([eval(str(node))])
+	tmp_node = eval(str(node))
 	for i in range(0, len(node["arguments"])):
 		if isinstance(node["arguments"][i]["value"], dict):
 			arg = node["arguments"][i]["value"]
-			node_list[-1]["arguments"][i]["id"] = node["arguments"][i]["value"]["id"]
-			node_list[-1]["arguments"][i]["value"] = node["arguments"][i]["value"]["name"]
+			tmp_node["arguments"][i]["id"] = node["arguments"][i]["value"]["id"]
+			tmp_node["arguments"][i]["value"] = node["arguments"][i]["value"]["name"]
 			node_list =  makeObjectInterconnectionList(arg, node_list)
+	node_list.extend([tmp_node])
 	return node_list
 
 def compareInputs(in_wire):
@@ -56,11 +60,7 @@ def generateRoot(node, bw):
 	input_definition = ""
 	for entry in inputs_list:
 		input_definition = input_definition + "\tinput wire [%d:0] %s;\n"%(bw-1, entry)
-	inputs_list = inputs_list[:-1]
-	input_definition = input_definition + "\tinput wire RST;\n"
-	input_definition = input_definition + "\tinput wire ST;\n"
-	input_definition = input_definition + "\tinput wire CLK;\n"
-	input_definition = input_definition + "\toutput wire RD;\n"
+	input_definition = input_definition[:-1]
 	node_list = makeObjectInterconnectionList(node, [])
 	#Define st rd wires
 	strd_list = [""]
@@ -100,78 +100,26 @@ def generateRoot(node, bw):
 		mod_name = "_%s%s"%(entry["name"],entry["id"])
 		mod_string = "\tnode%s n%s(RST,%s,CLK,%s,%s,%s);"%(mod_name, mod_name, "node%s_st"%mod_name, "node%s_rd"%mod_name, "node%s_res"%mod_name, mod_in_list)
 		modules_list.extend([mod_string])
+	#Fill the template
+	template = open(BASIS_FUNCTIONS_DIR + "/root.tmp", "r").read()
+	template = template.replace("%INPUT_DEFINITIONS%",input_definition)
+	wire_data = "\n".join(res_def) + "\n".join(strd_list)
+	template = template.replace("%WIRES%", wire_data)
+	template = template.replace("%ASSIGNMENTS%", "\n".join(assigns))
+	template = template.replace("%MODULES%", "\n".join(modules_list))
+	template = template.replace("%ROOT_NAME%", node["name"])
+	template = template.replace("%ROOT_NODE_ID%", node["id"])
+	template = template.replace("%BUS_WIDTH%", str(bw - 1))
+	template = template.replace("%IN%", ", ".join(inputs_list))
+	#Save file
+	if not os.path.exists(PROJECT_DIR):
+		os.makedirs(PROJECT_DIR)
+	f = open(PROJECT_DIR + "/root_%s%s"%(node["name"], node["id"] + ".v"),"w")
+	f.write(template)
+	f.close()
+	return node_list
 
-	print(input_definition)
-	print("\n".join(res_def))
-	print("\n".join(strd_list))
-	print("\n".join(assigns))
-	print("\n".join(modules_list))
-	print(node["id"])
-
-def generateRootOld(tree, acc, bw):
-	template = open("root.tmp", "r").read()
-	template = template.replace("%ROOT_NODE_ID%", tree["id"]);
-	wires = []
-	print(acc["wire"])
-	for i in range(0,len(acc["wire"])):
-		if acc["wire"][i] not in wires:
-			wires.extend([acc["wire"][i]]) 
-	acc["wire"] = wires
-	input_definitions = ""
-	inputs = ""
-	wires = ""
-	for i in range(0, len(acc["wire"])):
-		if isWireType("in", acc["wire"][i]):
-			input_definitions = input_definitions + "    input %s\n"%(acc["wire"][i])
-			inputs = inputs + "%s, "%extractWireName(acc["wire"][i])
-		else:
-			wires = wires + "    %s\n"%(acc["wire"][i])
-	inputs = inputs[:-2] 
-	template = template.replace("%IN%", inputs);
-	template = template.replace("%INPUT_DEFINITIONS%", input_definitions)
-    
-	modules = ""
-	for modline in acc["module"]:
-		modules = modules + "    %s\n"%(modline)
-	template = template.replace("%MODULES%", modules)
-
-	assignments = ""
-	for ass in acc["start"]:
-		assignments = assignments + "    %s\n"%(ass)
-	assignments = assignments + "    assign RD = node%s_rd;\n"%(tree["id"])
-	assignments = assignments + "    assign RES[%d:0] = node%s_res[%d:0];\n"%(int(bw)-1, tree["id"], int(bw)-1)
-	template = template.replace("%ASSIGNMENTS%", assignments)
-	template = template.replace("%WIRES%", wires)
-	template = template.replace("%BUS_WIDTH%", str(bw))
-	#Generate testbench
-	template_tb = open("root_tb.tmp", "r").read()
-	input_wires = ""
-	input_regs = ""
-	assign_wires = ""
-	in_init = ""
-	cnt = 0
-	for arg in acc["wire"]:
-		if isWireType("in", arg):
-			wire = re.findall("^wire \[.*\] (.*);", arg)
-			wire = wire[0]
-			input_wires = input_wires + "\twire [%d-1:0] %s;\n"%(bw, wire)
-			input_regs = input_regs + "\treg [%d-1:0] r%s;\n"%(bw, wire) 
-			assign_wires = assign_wires + "\tassign %s = r%s;\n"%(wire, wire)
-			if cnt == 0:
-				in_init = in_init + "\tr%s = %d;\n"%(wire, 5)
-			if cnt == 1:
-				in_init = in_init + "\tr%s = %d;\n"%(wire, 2)
-			cnt = cnt + 1
-    
-	template_tb = template_tb.replace("%INDEF%", input_wires + input_regs)
-	template_tb = template_tb.replace("%ROOT_NODE_ID%", tree["id"])
-	template_tb = template_tb.replace("%IN%", inputs)
-	template_tb = template_tb.replace("%IN_ASSIGN%", assign_wires)
-	template_tb = template_tb.replace("%SIM_TIME%", str(16000))
-	template_tb = template_tb.replace("%IN_INIT%", in_init)    
-	template_tb = template_tb.replace("%BUS_WIDTH%", str(bw))
-	return template, template_tb
-    
+   
 if __name__ == "__main__":
 	line1 = "add(IN0,mul(IN1,IN2))"
 	tree = pparser.parseExp(line1)
