@@ -3,6 +3,7 @@
 
 from configs import *
 import generateRoot
+import treewalk
 import os
 
 def generate(node, bw):
@@ -29,9 +30,10 @@ def generate(node, bw):
 	max_in = "IN%d"%(len(node["arguments"])-1)
 
 	#Generate H and G classes
-	generateRoot.generateRoot(node["static"][0], bw)
-	generateRoot.generateRoot(node["static"][1], bw)
-
+	nodes_g = generateRoot.generateRoot(node["static"][0], bw)
+	nodes_h = generateRoot.generateRoot(node["static"][1], bw)
+	treewalk.generateNodes(nodes_g, bw)
+	treewalk.generateNodes(nodes_h, bw)
 	#Fill template
 	template = open(BASIS_FUNCTIONS_DIR + "/composition_r.tmp","r").read()
 	template = template.replace("%IN_LIST%", in_list)
@@ -40,6 +42,7 @@ def generate(node, bw):
 	template = template.replace("%G_CLASS%", g_class)
 	template = template.replace("%H_CLASS%", h_class)
 	template = template.replace("%MAX_IN%", max_in)
+	template = template.replace("%NAME%", str(node["name"]) + str(node["id"]))
 	template = template.replace("%BUS_WIDTH%", str(bw-1))
 	if not os.path.exists(PROJECT_DIR):
 		os.makedirs(PROJECT_DIR)

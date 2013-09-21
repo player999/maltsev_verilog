@@ -1,4 +1,4 @@
-module operation_o(RST, ST, CLK, RD, RES, %IN);
+module operation_o(RST, ST, CLK, RD, RES, %IN_LIST%);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
@@ -6,7 +6,7 @@ module operation_o(RST, ST, CLK, RD, RES, %IN);
 	output reg [%BUS_WIDTH-1:0] RES;
 	reg STold;
 	reg RF;
-%IDEF
+%IN_DEF%
 
 	always @(posedge CLK) begin
 		if(RST == 1) begin
@@ -20,9 +20,9 @@ module operation_o(RST, ST, CLK, RD, RES, %IN);
 				RF = 1;
 			end
 			if(ST == 1 && STold == 0) begin
-                                RD = 0;
-                     		RF = 0;
-			   end
+                RD = 0;
+                RF = 0;
+			end
 		end
 		STold = ST;
 	end	

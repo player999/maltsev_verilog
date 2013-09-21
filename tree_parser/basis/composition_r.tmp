@@ -1,4 +1,4 @@
-module composition_r(RST, ST, CLK, RD, RES, %IN_LIST%);
+module composition_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 	input wire RST;
 	input wire ST;
 	input wire CLK;

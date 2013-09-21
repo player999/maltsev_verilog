@@ -2,4 +2,4 @@ R	composition_r
 M	composition_m
 i	operation_i
 o	operation_o
-s	opetation_s
+s	operation_s

@@ -1,4 +1,4 @@
-module operation_s(RST, ST, CLK, RD, RES, IN);
+module operation_%NAME%(RST, ST, CLK, RD, RES, IN);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
