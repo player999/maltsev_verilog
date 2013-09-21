@@ -1,32 +1,21 @@
 VERILOG=iverilog
 TARGET=root
+PROJECT_DIR=output
 all:
 	rm -rf ./output
-	rm -f *.v
 	./treewalk.py
-	rm -f *_tb.v 
-	rm -f *.vcd
-	rm -f *.png
-	$(VERILOG) *.v -o $(TARGET)
+	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
 	./$(TARGET)
 
 compile:
 	rm -rf ./output
-	rm -f *.v
 	./treewalk.py
-	rm -f *_tb.v 
-	rm -f *.vcd
-	rm -f *.png
-	$(VERILOG) *.v -o $(TARGET)
+	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
 
 
 clean:
 	rm -rf ./output
-	rm -f *.v
-	rm -f *.vcd
-	rm -f ./$(TARGET)
-	rm -rf ./__pycache__
-	rm -f *.png
 
 clean-all:clean
 	rm -rf __pycache__
+	rm -rf ./basis/__pycache__

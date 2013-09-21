@@ -1,14 +1,14 @@
-module composition_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
+module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH%-1:0] RES;
-	reg [%BUS_WIDTH%-1:0] BUF;
-	wire [%BUS_WIDTH%-1:0] res_g;
-	wire [%BUS_WIDTH%-1:0] res_h;
-	reg [%BUS_WIDTH%-1:0] CNT;
-	reg [%BUS_WIDTH%-1:0] ITERATIONS;
+	output reg [%BUS_WIDTH%:0] RES;
+	reg [%BUS_WIDTH%:0] BUF;
+	wire [%BUS_WIDTH%:0] res_g;
+	wire [%BUS_WIDTH%:0] res_h;
+	reg [%BUS_WIDTH%:0] CNT;
+	reg [%BUS_WIDTH%:0] ITERATIONS;
 	wire rd_g;
 	wire rd_h;
 	reg st_h;
@@ -18,7 +18,7 @@ module composition_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 	reg rd_h_old;
 	
 %IN_DEF%
-	wire [%BUS_WIDTH%-1:0] %ADDITIONAL_IN%;
+	wire [%BUS_WIDTH%:0] %ADDITIONAL_IN%;
 	
 	%G_CLASS% g(RST, ST, CLK, rd_g, res_g, %IN_LIST%);
 	%H_CLASS% h(RST, st_h, CLK, rd_h, res_h, %IN_LIST%, %ADDITIONAL_IN%);

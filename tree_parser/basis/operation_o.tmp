@@ -1,9 +1,9 @@
-module operation_o(RST, ST, CLK, RD, RES, %IN_LIST%);
+module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH-1:0] RES;
+	output reg [%BUS_WIDTH%:0] RES;
 	reg STold;
 	reg RF;
 %IN_DEF%

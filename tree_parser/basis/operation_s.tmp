@@ -1,10 +1,10 @@
-module operation_%NAME%(RST, ST, CLK, RD, RES, IN);
+module  node_%NAME%(RST, ST, CLK, RD, RES, IN);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH%-1:0] RES;
-	input wire [%BUS_WIDTH%-1:0] IN;
+	output reg [%BUS_WIDTH%:0] RES;
+	input wire [%BUS_WIDTH%:0] IN;
 	reg STold;
 	reg RF;
 
