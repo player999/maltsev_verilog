@@ -93,7 +93,7 @@ def generateRoot(node, bw):
 		mod_in_list = ""
 		for arg in entry["arguments"]:
 			if "id" in arg.keys():
-				mod_in_list = mod_in_list + "node_%s%s_res,"%(arg["id"], arg["value"])
+				mod_in_list = mod_in_list + "node_%s%s_res,"%(arg["value"], arg["id"])
 			else:
 				mod_in_list = mod_in_list + arg["value"]+","
 		mod_in_list = mod_in_list[:-1]
