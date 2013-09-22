@@ -4,6 +4,7 @@ import pparser
 import generateRoot
 import subprocess
 import primitivelib
+import graph
 import sys
 import os
 
@@ -46,6 +47,7 @@ def makeVerilog(term, bw):
 	tree = primitivelib.convertToPrimitives(tree)
 	node_list = generateRoot.generateRoot(tree, bw)
 	generateNodes(node_list, bw)
+	graph.drawGraph(tree)
 	return tree
 
 def generateTestbench(tree, bw, values, sim_time):
@@ -107,5 +109,5 @@ if __name__ == "__main__":
 	line7 = "mul(IN0,IN1)"
 	line8 = "add(add(mul(IN0,IN1),IN2),add(IN3,IN4))"
 	tree = makeVerilog(line8, 16)
-	generateTestbench(tree, 16, [2,3,3,2,3], 100000)
+	generateTestbench(tree, 16, [2,3,3,4,2], 100000)
 

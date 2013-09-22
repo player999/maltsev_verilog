@@ -6,7 +6,7 @@ all:clean copy_needed
 	./treewalk.py
 	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
 	./$(PROJECT_DIR)/$(TARGET)
-
+	dot $(PROJECT_DIR)/graph.txt -Tpng -o $(PROJECT_DIR)/graph.png
 compile:clean copy_needed
 	./treewalk.py
 	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)

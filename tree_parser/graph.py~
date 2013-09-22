@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+# -*- tab-width:4 -*-
+
+from configs import *
+
+def drawGraph(tree):
