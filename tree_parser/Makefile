@@ -1,17 +1,19 @@
 VERILOG=iverilog
 TARGET=root
 PROJECT_DIR=output
-all:
-	rm -rf ./output
+BASIS_DIR=basis
+all:clean copy_needed
 	./treewalk.py
 	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
 	./$(PROJECT_DIR)/$(TARGET)
 
-compile:
-	rm -rf ./output
+compile:clean copy_needed
 	./treewalk.py
 	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
 
+copy_needed:
+	mkdir -p $(PROJECT_DIR)
+	cp ./$(BASIS_DIR)/*.v ./$(PROJECT_DIR)/
 
 clean:
 	rm -rf ./output

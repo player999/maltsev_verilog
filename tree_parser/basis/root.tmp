@@ -5,12 +5,13 @@ module root_%ROOT_NAME%%ROOT_NODE_ID%(RST, ST, CLK, RD, RES, %IN%);
 %INPUT_DEFINITIONS%
 	output wire RD;
 	output wire [%BUS_WIDTH%:0] RES;
+	
 
 %WIRES%
 
 %ASSIGNMENTS%
 
 %MODULES%
-
+	
 endmodule
 

@@ -72,18 +72,16 @@ def generateRoot(node, bw):
 	res_def = [""]
 	for	entry in node_list:
 		res_def.extend(["\twire [%d:0] node_%s%s_res;"%(bw - 1, entry["name"], entry["id"])])
-
+	
+	#Connect all start wires
+	start_wires = makeStartWireList(node, [])	
+	assigns = ["\tassign RES = node_%s%s_res;"%(node["name"], node["id"])]
 	#Expression for RD wire
 	rd_list = ""
 	for entry in node_list:
 		rd_list = rd_list + "node_%s%s_rd&"%(entry["name"],entry["id"])
 	rd_list = rd_list[:-1]
-	
-	#Connect all start wires
-	start_wires = makeStartWireList(node, [])	
-	assigns = ["\tassign RD = node_%s%s_rd;"%(node["name"], node["id"])]
-
-	assigns.extend(["\tassign RES = node_%s%s_res;"%(node["name"], node["id"])])
+	assigns.extend(["\tassign RD = %s;"%(rd_list)])
 	for entry in start_wires:
 		if entry["assign"]:
 			st_exp = ""

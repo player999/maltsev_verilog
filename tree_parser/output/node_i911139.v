@@ -1,12 +1,14 @@
-module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
+module node_i911139(RST, ST, CLK, RD, RES, IN0, IN1);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH%:0] RES;
+	output reg [15:0] RES;
 	reg STold;
 	reg RF;
-%IN_DEF%
+input wire [15:0] IN0;
+input wire [15:0] IN1;
+
 
 	always @(posedge CLK) begin
 		if(RST == 1) begin
@@ -16,7 +18,7 @@ module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 				RD = 1;
 			end
 			if(RF == 0) begin
-				RES = %IRESULT%;
+				RES = IN0;
 				RF = 1;
 			end
 			if((ST == 1) && (STold == 0)) 

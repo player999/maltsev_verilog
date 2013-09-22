@@ -24,7 +24,7 @@ module root_tb();
         rST = 0;
 %IN_INIT%
         #15 rRST = 0;
-        #10 rST = 1;
+        #20 rST = 1;
         #10 rST = 0;
         #%SIM_TIME% $finish;
     end

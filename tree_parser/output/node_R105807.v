@@ -1,14 +1,14 @@
-module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
+module node_R105807(RST, ST, CLK, RD, RES, IN0, IN1);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
 	output reg RD;
-	output reg [%BUS_WIDTH%:0] RES;
-	reg [%BUS_WIDTH%:0] BUF;
-	wire [%BUS_WIDTH%:0] res_g;
-	wire [%BUS_WIDTH%:0] res_h;
-	reg [%BUS_WIDTH%:0] CNT;
-	reg [%BUS_WIDTH%:0] ITERATIONS;
+	output reg [15:0] RES;
+	reg [15:0] BUF;
+	wire [15:0] res_g;
+	wire [15:0] res_h;
+	reg [15:0] CNT;
+	reg [15:0] ITERATIONS;
 	wire rd_g;
 	wire rd_h;
 	wire STst;
@@ -18,15 +18,17 @@ module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 	reg rd_g_old;
 	reg rd_h_old;
 	
-%IN_DEF%
-	wire [%BUS_WIDTH%:0] %ADDITIONAL_IN%;
+input wire [15:0] IN0;
+input wire [15:0] IN1;
+
+	wire [15:0] IN2;
 
 	starter strtr1(RST, CLK, ST, STst);	
-	%G_CLASS% g(RST, STst, CLK, rd_g, res_g, %IN_LIST%);
-	%H_CLASS% h(RST, st_h, CLK, rd_h, res_h, %IN_LIST%, %ADDITIONAL_IN%);
+	root_i385590 g(RST, STst, CLK, rd_g, res_g, IN0, IN1);
+	root_i560546 h(RST, st_h, CLK, rd_h, res_h, IN0, IN1, IN2);
 	//g, h
 	
-	assign %ADDITIONAL_IN%[%BUS_WIDTH%:0] = (CNT[%BUS_WIDTH%:0] > 1)?res_h[%BUS_WIDTH%-1:0]:res_g[%BUS_WIDTH%:0];
+	assign IN2[15:0] = (CNT[15:0] > 1)?res_h[15-1:0]:res_g[15:0];
 
 	always @(posedge CLK) begin
 		if(RST == 1) begin
@@ -71,8 +73,8 @@ module node_%NAME%(RST, ST, CLK, RD, RES, %IN_LIST%);
 			end
 			if(STst == 1 && STold == 0) begin
 				RD = 0;
-				if(%MAX_IN% > 0) begin
-					ITERATIONS = %MAX_IN% + 2;
+				if(IN1 > 0) begin
+					ITERATIONS = IN1 + 2;
 				end else begin
 					ITERATIONS = 0;
 				end

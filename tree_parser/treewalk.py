@@ -105,7 +105,7 @@ if __name__ == "__main__":
 	line5 = "add(IN0,IN1)"
 	line6 = "add(IN0,mul(IN1,IN2))"
 	line7 = "mul(IN0,IN1)"
-	line8 = "add(add(IN0,IN1),IN2)"
+	line8 = "add(add(mul(IN0,IN1),IN2),add(IN3,IN4))"
 	tree = makeVerilog(line8, 16)
-	generateTestbench(tree, 16, [2,3,6], 500000)
+	generateTestbench(tree, 16, [2,3,3,2,3], 100000)
 
