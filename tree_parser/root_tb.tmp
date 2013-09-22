@@ -1,16 +1,15 @@
-
 module root_tb();
     wire RST;
     wire ST;
     wire CLK;
     wire RD;
-    wire [%BUS_WIDTH%-1:0] RES;
+    wire [%BUS_WIDTH%:0] RES;
     reg rRST;
     reg rST;
     reg rCLK;
-%INDEF%
+%IN_DEF%
     
-    root%ROOT_NODE_ID% root(RST, ST, CLK, RD, RES, %IN%);
+    root_%NAME% root(RST, ST, CLK, RD, RES, %IN_LIST%);
 
 %IN_ASSIGN%
     assign CLK = rCLK;
@@ -18,7 +17,7 @@ module root_tb();
     assign ST = rST;
 
     initial begin
-        $dumpfile("root_tb.vcd");
+        $dumpfile("%DUMP_FILE%");
         $dumpvars;
         rCLK = 0;
         rRST = 1;

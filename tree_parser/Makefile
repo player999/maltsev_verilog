@@ -5,7 +5,7 @@ all:
 	rm -rf ./output
 	./treewalk.py
 	$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
-	./$(TARGET)
+	./$(PROJECT_DIR)/$(TARGET)
 
 compile:
 	rm -rf ./output
