@@ -7,20 +7,33 @@ import generateRoot
 def nodeName(node):
 	return node["name"] + node["id"]
 
-def drawGraph(tree):
+def drawGraph(tree, fname):
 	graph_text = "digraph Root {\n"
 	graph_text = drawNode(tree, graph_text)
-	#input_list = generateRoot.makeInputWireList(tree, [])
-	#input_list = " ".join(input_list)
-	#graph_text = graph_text + "{rank=same; %s}\n"%input_list
 	graph_text = graph_text + "}\n"
 	
-
 	#Save to file
-	f = open(PROJECT_DIR + "/graph.txt","w")
+	f = open(PROJECT_DIR + "/%s"%fname,"w")
 	f.write(graph_text)
 	f.close()
 
+def makeHTML(src_tree, primitive_tree):
+	template = open(HTML_TEMPLATE, "r").read()
+	template = template.replace("%JSON_SOURCE%", src_tree)
+	template = template.replace("%JSON_PRIMITIVE%", primitive_tree)
+	template = template.replace("%IMG_SOURCE%", SOURCE_IMG)
+	template = template.replace("%IMG_PRIMITIVE%", PRIMITIVE_IMG)
+	f = open(PROJECT_DIR + "/" + HTML_OUT, "w")
+	f.write(template)
+	f.close()
+
+def makeMk():
+	constants = open("configs.py","r").read()
+	constants = constants.replace("\"","")
+	constants = constants.replace(" ","")
+	f = open(MK_INCLUDE, "w")
+	f.write(constants)
+	f.close()
 
 def drawNode(node, graph_text):
 	for i in range(0,len(node["arguments"])):
@@ -35,6 +48,7 @@ def drawNode(node, graph_text):
 		if isinstance(node["static"][i], dict):
 			graph_text = graph_text + "%s->%s[style=dotted];\n"%(nodeName(node["static"][i]), nodeName(node))
 			graph_text = drawNode(node["static"][i], graph_text)
-		#if isinstance(node["static"][i], str):
-		#	graph_text = graph_text + "%s->%s[style=dotted];\n"%(nodeName(node), str(node["static"][i]))
 	return graph_text
+
+if __name__ == "__main__":
+	makeMk()

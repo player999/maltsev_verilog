@@ -7,18 +7,9 @@ import primitivelib
 import graph
 import sys
 import os
+import json
 
 from configs import *
-
-def drawGraph(graph, name):
-	line = "digraph {\n";
-	for entry in graph:
-		line = line + "\t" + entry + ";\n"
-	line = line + "}\n"
-	arguments = ['dot', '-Tpng', '-o%s.png'%name]
-	p = subprocess.Popen(arguments, stdin=subprocess.PIPE)
-	p.stdin.write(line.encode('utf-8'))
-	p.stdin.close()
 
 def loadBasisList():
 	basis_file = open(BASIS_FUNCTIONS_FILE, "r").readlines()
@@ -44,10 +35,21 @@ def generateNodes(node_list, bw):
 def makeVerilog(term, bw):
 	sys.path.append(os.path.abspath(BASIS_FUNCTIONS_DIR))
 	tree = pparser.parseExp(term)
+	graph.drawGraph(tree, SOURCE_GRAPH)
+	src_json  = json.dumps(tree, indent=4, separators=(',', ': '))
+	f = open(PROJECT_DIR + "/" + SOURCE_JSON, "w")
+	f.write(src_json)
+	f.close()
 	tree = primitivelib.convertToPrimitives(tree)
 	node_list = generateRoot.generateRoot(tree, bw)
 	generateNodes(node_list, bw)
-	graph.drawGraph(tree)
+	graph.drawGraph(tree, PRIMITIVE_GRAPH)
+	primitive_json = json.dumps(tree, indent=4, separators=(',', ': '))
+	f = open(PROJECT_DIR + "/" + PRIMITIVE_JSON, "w")
+	f.write(primitive_json)
+	graph.makeHTML(src_json, primitive_json)
+	f.close()
+	
 	return tree
 
 def generateTestbench(tree, bw, values, sim_time):
@@ -108,6 +110,6 @@ if __name__ == "__main__":
 	line6 = "add(IN0,mul(IN1,IN2))"
 	line7 = "mul(IN0,IN1)"
 	line8 = "add(add(mul(IN0,IN1),IN2),add(IN3,IN4))"
-	tree = makeVerilog(line8, 16)
-	generateTestbench(tree, 16, [2,3,3,4,2], 100000)
+	tree = makeVerilog(line6, 16)
+	generateTestbench(tree, 16, [3,4,5], 100000)
 

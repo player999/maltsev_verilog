@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>Output</title>
+	</head>
+
+	<body>
+		<h1>JSON source</h1>
+		<pre>
+%JSON_SOURCE%
+		</pre>
+		<h1>Source graph</h1>
+		<br/><img src="%IMG_SOURCE%">
+		
+		<h1>JSON primitives</h1>
+		<pre>
+%JSON_PRIMITIVE%
+		</pre>
+		<h1>Primitives graph</h1>
+		<br/><img src="%IMG_PRIMITIVE%">
+
+	</body>
+</html>
