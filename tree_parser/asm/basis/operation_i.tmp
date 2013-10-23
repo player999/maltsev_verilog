@@ -1,0 +1,7 @@
+		;;Selector
+node_%NAME%:
+		push	rbp
+		mov		rbp,rsp
+		mov		rax,[rsp + %OFFSET%]
+		pop		rbp
+		ret

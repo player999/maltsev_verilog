@@ -1,0 +1,33 @@
+		;;Reduction
+extern	%G_FUNCTION%
+extern	%H_FUNCTION%
+global	node_%NAME%
+node_%NAME%:
+		push	rbp
+		mov		rbp,rsp
+		;; Call G function
+		push rbp
+		mov	 rbp, rsp
+		%PUSH_ARGUMENTS%
+		call	%G_FUNCTION%
+		sub	 rsp, %GSTACK_OFFSET%
+		pop	 rbp
+		
+		;;Loop
+		mov	rcx, [rsp + 16]
+		mov	rbx, rax;
+loop:
+		;; Call H function
+		push rcx
+		push rbp
+		mov	 rbp, rsp
+		%PUSH_ARGUMENTS%
+		push rbx
+		call	%H_FUNCTION%
+		sub	rsp,%HSTACK_OFFSET%
+		pop	rbp
+		pop	rcx
+		mov rbx,rax
+		dec	rcx
+		jne	loop
+		ret

@@ -1,0 +1,8 @@
+		;;Incrementator
+node_%NAME%:
+		push	rbp
+		mov		rbp,rsp
+		mov		rax,[rsp + 16]
+		inc		rax
+		pop		rbp
+		ret

@@ -1,0 +1,7 @@
+		;;Zero generator
+node_%NAME%:
+		push	rbp				;Prologue
+		mov		rbp,rsp
+		mov		rax,0			;First argument
+		pop		rbp
+		ret
