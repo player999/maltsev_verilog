@@ -1,5 +1,0 @@
-R	composition_r
-M	composition_m
-i	operation_i
-o	operation_o
-s	operation_s

@@ -7,16 +7,16 @@ import primitivelib
 import os
 from configs import *
 		
-def makeInputWireList(root_node, input_list):
+def makeInVarList(root_node, input_list):
 	for arg in root_node["arguments"]:
 		if isinstance(arg["value"], str):
 			res = re.findall("PR([0-9]*)", arg["value"])
 			if res == []:
 				input_list.extend([arg["value"]])
 		elif isinstance(arg["value"], dict):
-			input_list = makeInputWireList(arg["value"], input_list)
+			input_list = makeInVarList(arg["value"], input_list)
 		else:
-			raise Exception("makeInputWireList: Unknown type of argument")
+			raise Exception("makeInVar: Unknown type of argument")
 	input_list = list(set(input_list))
 	input_list = sorted(input_list, key=compareInputs)		
 	return input_list
@@ -54,72 +54,65 @@ def getListById(Id, List):
 			return entry
 	return 0
 
+def generateCallText(module_entry):
+	call_text = "\tpush rbp\n\tmov rbp, rsp\n"
+	#pushing data
+	for i in range(0, len(module_entry["arguments"])):
+		#load to register
+		if "id" in module_entry["arguments"][i]: 
+			call_text = call_text + "\tmov rax, [node_%s%s_res]\n"%(module_entry["arguments"][i]["value"], module_entry["arguments"][i]["id"])
+		else:
+			call_text = call_text + "\tmov rax, [%s]\n"%(module_entry["arguments"][i]["value"])
+		#push
+		call_text = call_text + "\tpush rax\n"
+	#call
+	call_text = call_text + "\tcall node_%s%s\n"%(module_entry["name"], module_entry["id"])
+	call_text = call_text + "\tmov [node_%s%s_res], rax\n"%(module_entry["name"], module_entry["id"])
+	call_text = call_text + "\tsub rsp, %d\n" % (len(module_entry["arguments"]) * 8)
+	call_text = call_text + "\tpop rbp\n\n"
+	return call_text
+
 def generateRoot(node, bw):
-	#IO list
-	inputs_list = makeInputWireList(node, [])
-	input_definition = ""
+	#var_list
+	inputs_list = makeInVarList(node, [])
+	var_list = ""
 	for entry in inputs_list:
-		input_definition = input_definition + "\tinput wire [%d:0] %s;\n"%(bw-1, entry)
-	input_definition = input_definition[:-1]
+		var_list = var_list + "\t%s: dw 0\n"%(entry)
+	#import list
+	import_list = ""
 	node_list = makeObjectInterconnectionList(node, [])
-	#Define st rd wires
-	strd_list = [""]
-	for entry in node_list:
-		strd_list.extend(["\twire node_%s%s_rd;"%(entry["name"], entry["id"])])
-		strd_list.extend(["\twire node_%s%s_st;"%(entry["name"], entry["id"])])
-	
-	#Define RES wires
+	for i in range(0, len(node_list)):
+		import_list = import_list + "\textern node_%s%s\n"%(node_list[i]["name"], node_list[i]["id"])
+
+	#add res wires
 	res_def = [""]
 	for	entry in node_list:
-		res_def.extend(["\twire [%d:0] node_%s%s_res;"%(bw - 1, entry["name"], entry["id"])])
+		var_list = var_list + "\tnode_%s%s_res: dw 0\n"%(entry["name"], entry["id"])
 	
-	#Connect all start wires
-	start_wires = makeStartWireList(node, [])	
-	assigns = ["\tassign RES = node_%s%s_res;"%(node["name"], node["id"])]
-	#Expression for RD wire
-	rd_list = ""
-	for entry in node_list:
-		rd_list = rd_list + "node_%s%s_rd&"%(entry["name"],entry["id"])
-	rd_list = rd_list[:-1]
-	assigns.extend(["\tassign RD = %s;"%(rd_list)])
-	for entry in start_wires:
-		if entry["assign"]:
-			st_exp = ""
-			for rd in entry["assign"]:
-				st_exp = st_exp + "node_%s%s_rd&"%(getListById(rd, node_list)["name"], rd)
-			st_exp = st_exp[:-1]
-			assigns.extend(["\tassign node_%s%s_st = %s;"%(getListById(entry["id"], node_list)["name"], entry["id"], st_exp)])
-		else:
-			assigns.extend(["\tassign node_%s%s_st = ST;"%(getListById(entry["id"], node_list)["name"], entry["id"])])
-
+	#load_inputs
+	load_inputs = ""
+	for i in range(0, len(inputs_list)):
+		load_inputs = load_inputs + "\tmov rax, [esp + %d]\n" %(8 + 8 * (len(inputs_list) - i))
+		load_inputs = load_inputs + "\tmov [%s], rax\n"%(inputs_list[i])
 	#Make modules list
-	modules_list = [""]
+	call_text = ""
 	for entry in node_list:
-		mod_in_list = ""
-		for arg in entry["arguments"]:
-			if "id" in arg.keys():
-				mod_in_list = mod_in_list + "node_%s%s_res,"%(arg["value"], arg["id"])
-			else:
-				mod_in_list = mod_in_list + arg["value"]+","
-		mod_in_list = mod_in_list[:-1]
-		mod_name = "_%s%s"%(entry["name"],entry["id"])
-		mod_string = "\tnode%s n%s(RST,%s,CLK,%s,%s,%s);"%(mod_name, mod_name, "node%s_st"%mod_name, "node%s_rd"%mod_name, "node%s_res"%mod_name, mod_in_list)
-		modules_list.extend([mod_string])
+		call_text = call_text + generateCallText(entry)
+	#Answer
+	answer = "\tmov rax, [node_%s%s_res]\n"%(node["name"], node["id"])
 	#Fill the template
 	template = open(BASIS_FUNCTIONS_DIR + "/root.tmp", "r").read()
-	template = template.replace("%INPUT_DEFINITIONS%",input_definition)
-	wire_data = "\n".join(res_def) + "\n".join(strd_list)
-	template = template.replace("%WIRES%", wire_data)
-	template = template.replace("%ASSIGNMENTS%", "\n".join(assigns))
-	template = template.replace("%MODULES%", "\n".join(modules_list))
+	template = template.replace("%VARIABLES%", var_list)
+	template = template.replace("%IMPORT%", import_list)
+	template = template.replace("%LOAD_INPUTS%", load_inputs)
 	template = template.replace("%ROOT_NAME%", node["name"])
 	template = template.replace("%ROOT_NODE_ID%", node["id"])
-	template = template.replace("%BUS_WIDTH%", str(bw - 1))
-	template = template.replace("%IN%", ", ".join(inputs_list))
+	template = template.replace("%CALLS%", call_text)
+	template = template.replace("%ANSWER%", answer)
 	#Save file
 	if not os.path.exists(PROJECT_DIR):
 		os.makedirs(PROJECT_DIR)
-	f = open(PROJECT_DIR + "/root_%s%s"%(node["name"], node["id"] + ".v"),"w")
+	f = open(PROJECT_DIR + "/root_%s%s"%(node["name"], node["id"] + ".s"),"w")
 	f.write(template)
 	f.close()
 	return node_list

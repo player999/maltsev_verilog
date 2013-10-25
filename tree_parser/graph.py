@@ -2,7 +2,6 @@
 # -*- tab-width:4 -*-
 
 from configs import *
-import generateRoot
 
 def nodeName(node):
 	return node["name"] + node["id"]
@@ -31,6 +30,7 @@ def makeMk():
 	constants = open("configs.py","r").read()
 	constants = constants.replace("\"","")
 	constants = constants.replace(" ","")
+	constants = constants.replace("PLATFORM+", "$(PLATFORM)")
 	f = open(MK_INCLUDE, "w")
 	f.write(constants)
 	f.close()

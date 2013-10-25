@@ -1,34 +1,30 @@
-module root_tb();
-    wire RST;
-    wire ST;
-    wire CLK;
-    wire RD;
-    wire [%BUS_WIDTH%:0] RES;
-    reg rRST;
-    reg rST;
-    reg rCLK;
-%IN_DEF%
-    
-    root_%NAME% root(RST, ST, CLK, RD, RES, %IN_LIST%);
+extern %TESTING_BLOCK%
+extern printf
+		section .data
+out_fmt:
+		db 'Result: %d',10,0
 
-%IN_ASSIGN%
-    assign CLK = rCLK;
-    assign RST = rRST;
-    assign ST = rST;
-
-    initial begin
-        $dumpfile("%DUMP_FILE%");
-        $dumpvars;
-        rCLK = 0;
-        rRST = 1;
-        rST = 0;
-%IN_INIT%
-        #15 rRST = 0;
-        #20 rST = 1;
-        #10 rST = 0;
-        #%SIM_TIME% $finish;
-    end
-
-    always #5 rCLK = !rCLK;
-
-endmodule
+		section .text
+		global main
+main:
+		
+		;; Run testing block
+		push	rbp
+		mov		rbp,rsp
+		;; 
+%LOAD_ARGS%
+		call	%TESTING_BLOCK%
+%RETURN_STACK%
+		;; 
+		pop		rbp
+		;; Print output line
+        push    rbp				; set up stack frame
+		mov     rbp,rsp			;
+		mov		esi,eax			; Argument
+		mov		edi,out_fmt		; Fmt string
+		call	printf
+		pop     rbp		 		; same as "leave" op
+		;; Exit the program
+		mov 	rax,1
+		mov 	rbx,0
+		int 	80h

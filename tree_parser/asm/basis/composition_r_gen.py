@@ -9,7 +9,7 @@ import os
 def generate(node, bw):
 	#Generate %PUSH_ARGUMENTS%
 	push_arguments = ""
-	for i in range(0, len(node["arguments"]))
+	for i in range(0, len(node["arguments"])):
 		push_arguments = push_arguments + "\t\tmov rax, [rsp + %i]\n"%(16 + (len(node["arguments"]) - i) * 8)
 		push_arguments = push_arguments + "\t\tpush rax\n"
 	#Genetate G and H STACK_OFFSET	
@@ -29,8 +29,8 @@ def generate(node, bw):
 	#Fill template
 	template = open(BASIS_FUNCTIONS_DIR + "/composition_r.tmp","r").read()
 	template = template.replace("%PUSH_ARGUMENTS%", push_arguments)
-	template = template.replace("%GSTACK_OFFSET%", gstack_offset)
-	template = template.replace("%HSTACK_OFFSET%", hstack_offset)
+	template = template.replace("%GSTACK_OFFSET%", str(gstack_offset))
+	template = template.replace("%HSTACK_OFFSET%", str(hstack_offset))
 	template = template.replace("%G_FUNCTION%", g_function)
 	template = template.replace("%H_FUNCTION%", h_function)
 	template = template.replace("%NAME%", str(node["name"]) + str(node["id"]))

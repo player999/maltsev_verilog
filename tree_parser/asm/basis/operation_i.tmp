@@ -1,4 +1,5 @@
 		;;Selector
+		global node_%NAME%
 node_%NAME%:
 		push	rbp
 		mov		rbp,rsp
