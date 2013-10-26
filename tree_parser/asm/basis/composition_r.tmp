@@ -6,12 +6,9 @@ node_%NAME%:
 		push	rbp
 		mov		rbp,rsp
 		;; Call G function
-		push rbp
-		mov	 rbp, rsp
-		%PUSH_ARGUMENTS%
+		%G_PUSH_ARGUMENTS%
 		call	%G_FUNCTION%
-		sub	 rsp, %GSTACK_OFFSET%
-		pop	 rbp
+		add	 rsp, %GSTACK_OFFSET%
 		
 		;;Loop
 		mov	rcx, [rsp + 16]
@@ -19,15 +16,14 @@ node_%NAME%:
 loop:
 		;; Call H function
 		push rcx
-		push rbp
-		mov	 rbp, rsp
-		%PUSH_ARGUMENTS%
+		%H_PUSH_ARGUMENTS%
 		push rbx
 		call	%H_FUNCTION%
-		sub	rsp,%HSTACK_OFFSET%
-		pop	rbp
-		pop	rcx
+		add	rsp,%HSTACK_OFFSET%
 		mov rbx,rax
+		pop rcx
 		dec	rcx
 		jne	loop
+		mov rsp,rbp
+		pop rbp
 		ret

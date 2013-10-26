@@ -17,9 +17,9 @@ endif
 ifeq ($(PLATFORM),asm)
 	@for i in `ls $(CURDIR)/$(PROJECT_DIR)/*.s`;\
 	 do \
-		 $(ASSEMBLER) $(NASM_FLAGS)  $$i; \
-	 done	
-	@$(CC) -o $(CURDIR)/$(PROJECT_DIR)/$(TARGET) $(CURDIR)/$(PROJECT_DIR)/*.o
+		 $(ASSEMBLER) $(NASM_FLAGS)  -l $${i%?}lst $$i; \
+	 done
+	@$(CC) -g -o $(CURDIR)/$(PROJECT_DIR)/$(TARGET) $(CURDIR)/$(PROJECT_DIR)/*.o
 endif
 
 copy_needed:

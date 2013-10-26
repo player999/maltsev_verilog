@@ -15,11 +15,7 @@ main:
 %LOAD_ARGS%
 		call	%TESTING_BLOCK%
 %RETURN_STACK%
-		;; 
-		pop		rbp
 		;; Print output line
-        push    rbp				; set up stack frame
-		mov     rbp,rsp			;
 		mov		esi,eax			; Argument
 		mov		edi,out_fmt		; Fmt string
 		call	printf

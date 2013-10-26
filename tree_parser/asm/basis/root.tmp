@@ -1,16 +1,15 @@
 %IMPORT%
 	global root_%ROOT_NAME%%ROOT_NODE_ID%
-
 	section .data
 %VARIABLES%
-
 	section .text
 root_%ROOT_NAME%%ROOT_NODE_ID%:
 	push rbp
-	mov rbp, rsp
+	mov rbp,rsp
 %LOAD_INPUTS%
 %CALLS%
 %ANSWER%
+	mov rsp,rbp
 	pop rbp
 	ret
 		

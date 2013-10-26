@@ -55,7 +55,8 @@ def getListById(Id, List):
 	return 0
 
 def generateCallText(module_entry):
-	call_text = "\tpush rbp\n\tmov rbp, rsp\n"
+	#call_text = "\tpush rbp\n\tmov rbp, rsp\n"
+	call_text=""
 	#pushing data
 	for i in range(0, len(module_entry["arguments"])):
 		#load to register
@@ -69,7 +70,7 @@ def generateCallText(module_entry):
 	call_text = call_text + "\tcall node_%s%s\n"%(module_entry["name"], module_entry["id"])
 	call_text = call_text + "\tmov [node_%s%s_res], rax\n"%(module_entry["name"], module_entry["id"])
 	call_text = call_text + "\tsub rsp, %d\n" % (len(module_entry["arguments"]) * 8)
-	call_text = call_text + "\tpop rbp\n\n"
+	#call_text = call_text + "\tpop rbp\n\n"
 	return call_text
 
 def generateRoot(node, bw):
@@ -77,7 +78,7 @@ def generateRoot(node, bw):
 	inputs_list = makeInVarList(node, [])
 	var_list = ""
 	for entry in inputs_list:
-		var_list = var_list + "\t%s: dw 0\n"%(entry)
+		var_list = var_list + "\t%s: dq 0\n"%(entry)
 	#import list
 	import_list = ""
 	node_list = makeObjectInterconnectionList(node, [])
@@ -87,12 +88,12 @@ def generateRoot(node, bw):
 	#add res wires
 	res_def = [""]
 	for	entry in node_list:
-		var_list = var_list + "\tnode_%s%s_res: dw 0\n"%(entry["name"], entry["id"])
+		var_list = var_list + "\tnode_%s%s_res: dq 0\n"%(entry["name"], entry["id"])
 	
 	#load_inputs
 	load_inputs = ""
 	for i in range(0, len(inputs_list)):
-		load_inputs = load_inputs + "\tmov rax, [esp + %d]\n" %(8 + 8 * (len(inputs_list) - i))
+		load_inputs = load_inputs + "\tmov rax, [rsp + %d]\n" %(8 + 8 * (len(inputs_list) - i))
 		load_inputs = load_inputs + "\tmov [%s], rax\n"%(inputs_list[i])
 	#Make modules list
 	call_text = ""
