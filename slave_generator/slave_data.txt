@@ -1,0 +1,17 @@
+Slave
+INPUTS:
+RST_I
+CLK_I
+ADR_I()
+DAT_I()
+WE_I
+SEL_I()
+STB_I
+
+OUTPUTS:
+DAT_O()
+ACK_O
+
+CONSTANT:
+ERR_O
+RTY_O
