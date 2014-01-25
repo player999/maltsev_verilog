@@ -7,6 +7,7 @@ import graph
 import sys
 import os
 import json
+import lisparse
 
 from configs import *
 
@@ -34,7 +35,10 @@ def generateNodes(node_list, bw):
 def makeCode(term, bw):
 	sys.path.append(os.path.abspath(BASIS_FUNCTIONS_DIR))
 	sys.path.append(os.path.abspath(PLATFORM))
-	tree = pparser.parseExp(term)
+	#tree = pparser.parseExp(term)
+	#print(tree)
+	tree = lisparse.parse_program(term)
+	print(tree)
 	graph.drawGraph(tree, SOURCE_GRAPH)
 	src_json  = json.dumps(tree, indent=4, separators=(',', ': '))
 	f = open(PROJECT_DIR + "/" + SOURCE_JSON, "w")
@@ -62,12 +66,14 @@ def generateTestbench(tree, bw, values, sim_time):
 if __name__ == "__main__":
 	line1 = "I(2,3;X,i(1;s(x),m(g(n),5)),Z)"
 	line2 = "R(i(0;x,y),i(0;s(x),y);x,y)"
-	line3 = "mul(x,y)"
+	line3 = "mul(IN0,IN1)"
 	line4 = "R(i(0;x,y),i(0;s(x),y,z);x,y)"
 	line5 = "add(IN0,IN1)"
 	line6 = "add(IN0,mul(IN1,IN2))"
 	line7 = "mul(IN0,IN1)"
 	line8 = "add(add(mul(IN0,IN1),IN2),add(IN3,IN4))"
-	tree = makeCode(line6, 16)
-	generateTestbench(tree, 16, [3,4,5], 100000)
+	line9 = "(mul (IN2 IN1))"
+	line10 = "(IF ((o (2) (IN1 IN2)) (o (2) (IN1 IN2)) (o (2) (IN1 IN2))) (IN1,IN2))"
+	tree = makeCode(line10, 16)
+	generateTestbench(tree, 16, [3,4], 100000)
 

@@ -3,3 +3,5 @@ M	composition_m
 i	operation_i
 o	operation_o
 s	operation_s
+F	composition_for
+IF	composition_if

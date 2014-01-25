@@ -1,0 +1,91 @@
+module node_%MODULENAME%(
+				  RST, 
+				  ST,
+				  CLK,
+				  RD,
+				  RES,
+				  %IN%
+				  );
+   input wire RST;
+   input wire ST;
+   input wire CLK;
+   output reg RD;
+   output reg [%BW%-1:0] RES;
+%IN_DEF%
+%rIN_DEF%
+   reg [3:0] 		   state;
+%SOUT_DEF%
+%rSOUT_DEF%
+   wire [%BW%-1:0] 	   pRES;
+%RD_DEF%
+   wire 			   pRD;
+   wire 			   lRD;
+%ST_DEF%
+   reg  			   pST;
+
+   assign lRD = %RD_AND%;
+
+   always @(posedge CLK) begin
+	  if(RST == 1) begin
+		 state = 0;
+%rSOUT_ZERO%
+		 RD = 0;
+		 RES = 0;
+%ST_ZERO%
+		 pST = 0;
+%rIN_ZERO%
+	  end //Reset
+
+	  case (state)
+		0: begin 
+		   state = 0;
+%rSOUT_ZERO%
+%rIN_ZERO%
+		   RD = 1;
+		   RES = 0;
+%ST_ZERO%
+		   pST = 0;
+		   if (ST == 1) state = 1;
+		end
+		1: begin
+		   RD = 0;
+%ST_ONE%
+		   state = 2;
+		end
+		2: begin
+		   state = 3;
+		end
+		3: begin
+%ST_ZERO%
+		   if (lRD == 1) state = 4;
+		end
+		4: begin
+%rSOUT_SOUT%
+		   pST = 1;
+		   state = 5;
+		end
+		5: begin
+		   state = 6;
+		end
+		6: begin
+		   pST = 0;
+%rIN_rSOUT%
+		   if (pRD == 1 & pRES == 0) state = 7;
+		   if (pRD == 1 & pRES > 0) state = 1;
+		end
+		7: begin
+		   RD = 1;
+		   RES = rSOUT0;
+%rIN_IN%
+		   if (ST == 1) state = 1;
+		   
+		end
+	  endcase // case (state)
+	  
+   end
+%IN_MODULES%
+%PRED_MODULE%
+
+endmodule // modulename
+
+   

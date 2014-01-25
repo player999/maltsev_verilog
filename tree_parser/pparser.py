@@ -61,5 +61,6 @@ def parseExp(string):
 if __name__ == '__main__':
 	teststring1 = "I(2,3;X,add(s(x), m(g(n), 5)),Z)"
 	teststring2 = "add(mul(X,Y),Z)"
-	res = parseParentheses(teststring2)
+	teststring3 = "R(i(0;x,y),i(0;s(x),y,z);x,y)"
+	res = parseParentheses(teststring3)
 	print(res)
