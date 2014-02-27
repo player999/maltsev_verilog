@@ -6,20 +6,36 @@ import pparser
 import primitivelib
 import os
 from configs import *
-		
+
 def makeInputWireList(root_node, input_list):
-	for arg in root_node["arguments"]:
-		if isinstance(arg["value"], str):
-			res = re.findall("PR([0-9]*)", arg["value"])
-			if res == []:
-				input_list.extend([arg["value"]])
-		elif isinstance(arg["value"], dict):
-			input_list = makeInputWireList(arg["value"], input_list)
+	for i in range(0, len(root_node["arguments"])):
+		if isinstance(root_node["arguments"][i]["value"], str):
+			input_list.extend([root_node["arguments"][i]["value"]])
+		elif isinstance(root_node["arguments"][i]["value"], dict):
+			input_list = makeInputWireList(root_node["arguments"][i]["value"], input_list)
 		else:
 			raise Exception("makeInputWireList: Unknown type of argument")
-	input_list = list(set(input_list))
-	input_list = sorted(input_list, key=compareInputs)		
 	return input_list
+
+
+def make_rinlist(node):
+	if len(node["static"]) == 0:
+		rin_list = makeInputWireList(node, [])
+	else:
+		rin_list = []
+		for i in range(0,len(node["arguments"])):
+			if isinstance(node["arguments"][i]["value"], str):
+				rin_list.extend([node["arguments"][i]["value"]])
+	#Eliminate clones
+	new_list = []
+	for i in range(0, len(rin_list)):
+		if rin_list[i] in new_list:
+			continue
+		else:
+			new_list.extend([rin_list[i]])
+	rin_list = ", ".join(new_list)
+	return rin_list
+
 
 def makeObjectInterconnectionList(node, node_list):
 	tmp_node = eval(str(node))
@@ -48,15 +64,22 @@ def makeStartWireList(node, st_list):
 	st_list.extend([{"id":node["id"], "assign":start}])
 	return st_list
 
+
 def getListById(Id, List):
 	for entry in List:
 		if entry["id"] == Id:
 			return entry
 	return 0
 
+
 def generateRoot(node, bw):
 	#IO list
-	inputs_list = makeInputWireList(node, [])
+	inputs_list = make_rinlist(node)
+	if inputs_list == "":
+		long_list = []
+	else:
+		long_list = inputs_list.split(", ")
+	inputs_list = long_list
 	input_definition = ""
 	for entry in inputs_list:
 		input_definition = input_definition + "\tinput wire [%d:0] %s;\n"%(bw-1, entry)
@@ -81,7 +104,7 @@ def generateRoot(node, bw):
 	for entry in node_list:
 		rd_list = rd_list + "node_%s%s_rd&"%(entry["name"],entry["id"])
 	rd_list = rd_list[:-1]
-	assigns.extend(["\tassign RD = %s;"%(rd_list)])
+	assigns.extend(["\tassign RDin = %s;"%(rd_list)])
 	for entry in start_wires:
 		if entry["assign"]:
 			st_exp = ""
@@ -101,10 +124,15 @@ def generateRoot(node, bw):
 				mod_in_list = mod_in_list + "node_%s%s_res,"%(arg["value"], arg["id"])
 			else:
 				mod_in_list = mod_in_list + arg["value"]+","
-		mod_in_list = mod_in_list[:-1]
+		if mod_in_list != "":
+			mod_in_list = mod_in_list[:-1]
 		mod_name = "_%s%s"%(entry["name"],entry["id"])
-		mod_string = "\tnode%s n%s(RST,%s,CLK,%s,%s,%s);"%(mod_name, mod_name, "node%s_st"%mod_name, "node%s_rd"%mod_name, "node%s_res"%mod_name, mod_in_list)
-		modules_list.extend([mod_string])
+		if mod_in_list == "":
+			mod_string = "\tnode%s n%s(RST,%s,CLK,%s,%s);"%(mod_name, mod_name, "node%s_st"%mod_name, "node%s_rd"%mod_name, "node%s_res"%mod_name)
+			modules_list.extend([mod_string])
+		else:
+			mod_string = "\tnode%s n%s(RST,%s,CLK,%s,%s,%s);"%(mod_name, mod_name, "node%s_st"%mod_name, "node%s_rd"%mod_name, "node%s_res"%mod_name, mod_in_list)
+			modules_list.extend([mod_string])
 	#Fill the template
 	template = open(BASIS_FUNCTIONS_DIR + "/root.tmp", "r").read()
 	template = template.replace("%INPUT_DEFINITIONS%",input_definition)
@@ -115,8 +143,11 @@ def generateRoot(node, bw):
 	template = template.replace("%ROOT_NAME%", node["name"])
 	template = template.replace("%ROOT_NODE_ID%", node["id"])
 	template = template.replace("%BUS_WIDTH%", str(bw - 1))
-	template = template.replace("%IN%", ", ".join(inputs_list))
-	#Save file
+	if len(inputs_list) == 0:
+		template = template.replace("%IN%", "")
+	else:
+		template = template.replace("%IN%", ", " + ", ".join(inputs_list))
+	#Save file 
 	if not os.path.exists(PROJECT_DIR):
 		os.makedirs(PROJECT_DIR)
 	f = open(PROJECT_DIR + "/root_%s%s"%(node["name"], node["id"] + ".v"),"w")

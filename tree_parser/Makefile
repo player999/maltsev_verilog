@@ -5,12 +5,13 @@ TARGET=root
 NASM_FLAGS=-f elf64
 CC=gcc
 all:compile
-	@dot $(PROJECT_DIR)/$(PRIMITIVE_GRAPH) -Teps -o $(PROJECT_DIR)/$(PRIMITIVE_IMG)
-	@dot $(PROJECT_DIR)/$(SOURCE_GRAPH) -Teps -o $(PROJECT_DIR)/$(SOURCE_IMG)
 	@./$(PROJECT_DIR)/$(TARGET)
 
 compile:clean copy_needed
 	@./treewalk.py
+	@dot $(PROJECT_DIR)/$(PRIMITIVE_GRAPH) -Tpng -o $(PROJECT_DIR)/$(PRIMITIVE_IMG)
+	@dot $(PROJECT_DIR)/$(SOURCE_GRAPH) -Tpng -o $(PROJECT_DIR)/$(SOURCE_IMG)
+
 ifeq ($(PLATFORM),verilog)
 	@$(VERILOG) ./$(PROJECT_DIR)/*.v -o ./$(PROJECT_DIR)/$(TARGET)
 endif 

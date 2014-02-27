@@ -2,7 +2,8 @@ import generateRoot
 import os
 from configs import *
 def generateTestbench(tree, bw, values, sim_time):
-	in_count = len(generateRoot.makeInputWireList(tree, []))
+	in_count = len(list(set(generateRoot.makeInputWireList(tree, []))))
+
 	#%NAME%
 	name = tree["name"] + tree["id"]	
 

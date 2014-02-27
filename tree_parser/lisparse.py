@@ -22,12 +22,13 @@ def check_syntax(program):
 	return program
 
 def build_ltree(program):
-	rx = re.compile(r'([a-zA-Z1-9]+)')
+	rx = re.compile(r'([a-zA-Z0-9]+)')
 	program = rx.sub("\"\g<1>\"", program)
 	program = re.sub("\\(","[", program)
 	program = re.sub("\\)","]", program)
 	program = re.sub(" ",", ", program)
-	program = eval(program)
+	print(program)
+	program = eval(program) 
 	return program
 
 def walk_program(program):

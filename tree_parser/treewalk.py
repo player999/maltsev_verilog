@@ -8,6 +8,7 @@ import sys
 import os
 import json
 import lisparse
+import preprocessor
 
 from configs import *
 
@@ -37,16 +38,29 @@ def makeCode(term, bw):
 	sys.path.append(os.path.abspath(PLATFORM))
 	#tree = pparser.parseExp(term)
 	#print(tree)
-	tree = lisparse.parse_program(term)
+	#tree = lisparse.parse_program(term)
+	tree = preprocessor.preprocess_text(term)
+	print("============================Preprocessor1==============================")
 	print(tree)
+	print("==========================END preprocessor1============================")
+	tree = preprocessor.convert2primitives(tree)
+	print("============================Preprocessor2==============================")
+	print(tree)
+	print("==========================END preprocessor2============================")
 	graph.drawGraph(tree, SOURCE_GRAPH)
 	src_json  = json.dumps(tree, indent=4, separators=(',', ': '))
 	f = open(PROJECT_DIR + "/" + SOURCE_JSON, "w")
 	f.write(src_json)
 	f.close()
 	tree = primitivelib.convertToPrimitives(tree)
+	print("============================Topimitives================================")
+	print(tree)
+	print("=========================END Toprimitives==============================")
 	rootgen = __import__("generateRoot")
 	node_list = rootgen.generateRoot(tree, bw)
+	print("============================Nodelist===================================")
+	print(node_list)
+	print("==========================END Nodelist=================================")
 	generateNodes(node_list, bw)
 	graph.drawGraph(tree, PRIMITIVE_GRAPH)
 	primitive_json = json.dumps(tree, indent=4, separators=(',', ': '))
@@ -64,16 +78,7 @@ def generateTestbench(tree, bw, values, sim_time):
 		tbgen.generateTestbench(tree, values)
 
 if __name__ == "__main__":
-	line1 = "I(2,3;X,i(1;s(x),m(g(n),5)),Z)"
-	line2 = "R(i(0;x,y),i(0;s(x),y);x,y)"
-	line3 = "mul(IN0,IN1)"
-	line4 = "R(i(0;x,y),i(0;s(x),y,z);x,y)"
-	line5 = "add(IN0,IN1)"
-	line6 = "add(IN0,mul(IN1,IN2))"
-	line7 = "mul(IN0,IN1)"
-	line8 = "add(add(mul(IN0,IN1),IN2),add(IN3,IN4))"
-	line9 = "(mul (IN2 IN1))"
-	line10 = "(IF ((o (2) (IN1 IN2)) (o (2) (IN1 IN2)) (o (2) (IN1 IN2))) (IN1,IN2))"
-	tree = makeCode(line10, 16)
-	generateTestbench(tree, 16, [3,4], 100000)
-
+	text = open("deleteme.txt", "r").read()
+	tree = makeCode(text, 16)
+	print(tree["arguments"])
+	generateTestbench(tree, 16, [3,32], 100000)

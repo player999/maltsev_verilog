@@ -40,7 +40,10 @@ def loadLibrary():
 		lib[i] = tuple(lib[i])
 	functions = []
 	for fun in lib:
-		description_file = open(LIBRARY_FUNCTIONS_DIR + "/" + fun[1] + ".fun","r").readlines()
+		try:
+			description_file = open(LIBRARY_FUNCTIONS_DIR + "/" + fun[1] + ".fun","r").readlines()
+		except:
+			continue
 		info_line = description_file[0][:-1].split('\t')
 		function = {}
 		function["mnemonic"] = info_line[0]
@@ -59,7 +62,7 @@ def convertToPrimitives(node):
 	return node
 
 def nodeWalker(node, basis, library):
-	node = checkLib(node, basis, library)
+	#node = checkLib(node, basis, library)
 	for i in range(0, len(node["arguments"])):
 		if isinstance(node["arguments"][i]["value"], dict):
 			node["arguments"][i]["value"] = nodeWalker(node["arguments"][i]["value"], basis, library)
@@ -70,6 +73,8 @@ def nodeWalker(node, basis, library):
 
 def checkLib(node, basis, library):
 	good_flag = 0
+	if len(library) == 0:
+		print("checklib: Warning, the library is empty")
 	for bf in basis:
 		if bf[0] == node["name"]:
 			return node
