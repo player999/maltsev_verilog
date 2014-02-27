@@ -5,6 +5,65 @@ from configs import *
 import generateRoot
 import treewalk
 import os
+import re
+
+#def make_rinlist(node):
+#	rin_list = ""
+#	for i in range(0,len(node["arguments"])):
+#		if isinstance(node["arguments"][i]["value"], str):
+#			rin_list = rin_list + "r" + node["arguments"][i]["value"] + ", "
+#	if rin_list != "":
+#		rin_list = rin_list[:-2]
+#		rin_list = ", " + rin_list
+#	return rin_list
+
+#def make_rinlist(node):
+#	if len(node["static"]) == 0:
+#		rin_list = makeInputWireList(node, [])
+#		if len(rin_list) > 0:
+#			rin_list = ", " + ", ".join(rin_list)
+#		else:
+#			rin_list = ""
+#	else:
+#		rin_list = ""
+#		for i in range(0,len(node["arguments"])):
+#			if isinstance(node["arguments"][i]["value"], str):
+#				rin_list = rin_list + "r" + node["arguments"][i]["value"] + ", "
+#			rin_list = rin_list[:-2]
+#	return rin_list
+
+def makeInputWireList(root_node, input_list):
+	for i in range(0, len(root_node["arguments"])):
+		if isinstance(root_node["arguments"][i]["value"], str):
+			input_list.extend([root_node["arguments"][i]["value"]])
+		elif isinstance(root_node["arguments"][i]["value"], dict):
+			input_list = makeInputWireList(root_node["arguments"][i]["value"], input_list)
+		else:
+			raise Exception("makeInputWireList: Unknown type of argument")
+	return input_list
+
+
+def make_rinlist(node):
+	if len(node["static"]) == 0:
+		rin_list = makeInputWireList(node, [])
+	else:
+		rin_list = []
+		for i in range(0,len(node["arguments"])):
+			if isinstance(node["arguments"][i]["value"], str):
+				rin_list.extend([node["arguments"][i]["value"]])
+	#Eliminate clones
+	new_list = []
+	for i in range(0, len(rin_list)):
+		if rin_list[i] in new_list:
+			continue
+		else:
+			new_list.extend([rin_list[i]])
+	if rin_list != []:
+		rin_list =", " + ", ".join(new_list)
+	else:
+		rin_list = ""
+	return rin_list
+
 
 def generate(node, bw):
 	#%IN%
@@ -25,6 +84,7 @@ def generate(node, bw):
 	pred_name = "root_%s%s"%(node["static"][2]["name"], node["static"][2]["id"])
 	pred_node = generateRoot.generateRoot(node["static"][2], bw)
 	treewalk.generateNodes(pred_node, bw)
+
 	#Yes-block
 	yes_name = "root_%s%s"%(node["static"][0]["name"], node["static"][0]["id"])
 	yes_node = generateRoot.generateRoot(node["static"][0], bw)
@@ -35,10 +95,21 @@ def generate(node, bw):
 	no_node = generateRoot.generateRoot(node["static"][1], bw)
 	treewalk.generateNodes(no_node, bw)
 
-	
+	#YIN
+	yin = make_rinlist(node["static"][0])
+
+	#NIN
+	nin = make_rinlist(node["static"][1])
+
+	#PIN
+	pin = make_rinlist(node["static"][2])
+
 	#Fill template
 	template = open(BASIS_FUNCTIONS_DIR + "/composition_if.tmp","r").read()
 	template = template.replace("%IN%", in_list)
+	template = template.replace("%YIN%", yin)
+	template = template.replace("%NIN%", nin)
+	template = template.replace("%PIN%", pin)
 	template = template.replace("%IN_DEF%", in_def)
 	template = template.replace("%MODULENAME%", str(node["name"]) + str(node["id"]))
 	template = template.replace("%BW%", str(bw))

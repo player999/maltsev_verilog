@@ -27,9 +27,9 @@ module node_%MODULENAME%(
 
    assign lRD = nRD & yRD & pRD;
    assign lRES = pRES > 0?SOUT_YES:SOUT_NO;
-   %YES_MOD% yes(RST, yST, CLK, yRD, SOUT_YES, %IN%);
-   %NO_MOD% no(RST, nST, CLK, nRD, SOUT_NO, %IN%);
-   %PRED_MOD% pred(RST, ST, CLK, pRD, pRES, %IN%);
+   %YES_MOD% yes(RST, yST, CLK, yRD, SOUT_YES%YIN%);
+   %NO_MOD% no(RST, nST, CLK, nRD, SOUT_NO%NIN%);
+   %PRED_MOD% pred(RST, ST, CLK, pRD, pRES%PIN%);
 
    always @(posedge CLK) begin
 	  if (RST == 1) begin

@@ -15,7 +15,7 @@ module node_%NAME%(RST, ST, CLK, RD, RES);
 				RD = 1;
 			end
 			if(RF == 0) begin
-				RES = 0;
+				RES = 1;
 				RF = 1;
 			end
 			if(ST == 1 && STold == 0) begin

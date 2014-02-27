@@ -1,26 +1,33 @@
-module node_%NAME%(RST, ST, CLK, RD, RES);
+module node_%NAME%(RST, ST, CLK, RD, RES, IN0, IN1);
 	input wire RST;
 	input wire ST;
 	input wire CLK;
+	input wire [%BUS_WIDTH%-1:0] IN0;
+	input wire [%BUS_WIDTH%-1:0] IN1;
 	output reg RD;
-	output reg [%BUS_WIDTH%:0] RES;
+	output reg [%BUS_WIDTH%-1:0] RES;
 	reg STold;
 	reg RF;
 
 	always @(posedge CLK) begin
 		if(RST == 1) begin
 			RD = 1;
+			RES = 0;
 		end else begin
 			if(RF == 1) begin
 				RD = 1;
 			end
 			if(RF == 0) begin
-				RES = 0;
+				if(IN0 == IN1) begin
+					RES = 1;
+				end else begin
+					RES = 0;
+				end
 				RF = 1;
 			end
 			if(ST == 1 && STold == 0) begin
-                RD = 0;
-                RF = 0;
+				RD = 0;
+				RF = 0;
 			end
 		end
 		STold = ST;

@@ -6,7 +6,7 @@ import os
 
 def generate(node, bw):
 	#Fill template
-	template = open(BASIS_FUNCTIONS_DIR + "/operation_o.tmp","r").read()
+	template = open(BASIS_FUNCTIONS_DIR + "/operation_nop.tmp","r").read()
 	template = template.replace("%NAME%", str(node["name"]) + str(node["id"]))
 	template = template.replace("%BUS_WIDTH%", str(bw-1))
 	if not os.path.exists(PROJECT_DIR):
