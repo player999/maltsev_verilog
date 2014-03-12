@@ -26,6 +26,8 @@ def make_rinlist(node):
 		for i in range(0,len(node["arguments"])):
 			if isinstance(node["arguments"][i]["value"], str):
 				rin_list.extend([node["arguments"][i]["value"]])
+			if isinstance(node["arguments"][i]["value"], dict):
+				rin_list = makeInputWireList(node["arguments"][i]["value"], rin_list)
 	#Eliminate clones
 	new_list = []
 	for i in range(0, len(rin_list)):

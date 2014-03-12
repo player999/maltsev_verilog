@@ -24,6 +24,8 @@ module node_%MODULENAME%(
    reg 				   yST;
    reg 				   nST;
    reg  			   pST;
+   reg				   st_old;
+
 
    assign lRD = nRD & yRD & pRD;
    assign lRES = pRES > 0?SOUT_YES:SOUT_NO;
@@ -43,7 +45,7 @@ module node_%MODULENAME%(
 	  case (state)
 		0:begin
 		   RD = 1;
-		   if (ST == 1) state = 1;
+		   if ((st_old == 0) && (ST == 1)) state = 1;
 		end
 		1:begin
 		   yST = 1;
@@ -68,9 +70,10 @@ module node_%MODULENAME%(
 		end
 		5:begin
 		   RD = 1;
-		   if(ST == 1) state = 1;
+		   if ((st_old == 0) && (ST == 1)) state = 1;
 		end
 	  endcase // case (state)
+	  st_old = ST;
    end // always @ (posedge CLK)
 endmodule // modulename
 	 

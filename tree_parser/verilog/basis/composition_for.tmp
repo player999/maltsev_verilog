@@ -83,7 +83,7 @@ module node_%MODULENAME%(
 		end
 		9: begin
 		   RD = 1;
-		   RES = rIN0;//rSOUT0;
+		   RES = rIN0;
 		   state = 10;
 		end
 		10: begin

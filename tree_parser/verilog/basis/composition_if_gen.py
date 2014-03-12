@@ -7,31 +7,6 @@ import treewalk
 import os
 import re
 
-#def make_rinlist(node):
-#	rin_list = ""
-#	for i in range(0,len(node["arguments"])):
-#		if isinstance(node["arguments"][i]["value"], str):
-#			rin_list = rin_list + "r" + node["arguments"][i]["value"] + ", "
-#	if rin_list != "":
-#		rin_list = rin_list[:-2]
-#		rin_list = ", " + rin_list
-#	return rin_list
-
-#def make_rinlist(node):
-#	if len(node["static"]) == 0:
-#		rin_list = makeInputWireList(node, [])
-#		if len(rin_list) > 0:
-#			rin_list = ", " + ", ".join(rin_list)
-#		else:
-#			rin_list = ""
-#	else:
-#		rin_list = ""
-#		for i in range(0,len(node["arguments"])):
-#			if isinstance(node["arguments"][i]["value"], str):
-#				rin_list = rin_list + "r" + node["arguments"][i]["value"] + ", "
-#			rin_list = rin_list[:-2]
-#	return rin_list
-
 def makeInputWireList(root_node, input_list):
 	for i in range(0, len(root_node["arguments"])):
 		if isinstance(root_node["arguments"][i]["value"], str):
@@ -51,6 +26,8 @@ def make_rinlist(node):
 		for i in range(0,len(node["arguments"])):
 			if isinstance(node["arguments"][i]["value"], str):
 				rin_list.extend([node["arguments"][i]["value"]])
+			if isinstance(node["arguments"][i]["value"], dict):
+				rin_list = makeInputWireList(node["arguments"][i]["value"], rin_list)
 	#Eliminate clones
 	new_list = []
 	for i in range(0, len(rin_list)):

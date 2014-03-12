@@ -9,6 +9,7 @@ import os
 import json
 import lisparse
 import preprocessor
+import random
 
 from configs import *
 
@@ -78,7 +79,8 @@ def generateTestbench(tree, bw, values, sim_time):
 		tbgen.generateTestbench(tree, values)
 
 if __name__ == "__main__":
+	random.seed(7)
 	text = open("deleteme.txt", "r").read()
 	tree = makeCode(text, 16)
 	print(tree["arguments"])
-	generateTestbench(tree, 16, [3,32], 100000)
+	generateTestbench(tree, 16, [32,8], 100000)
