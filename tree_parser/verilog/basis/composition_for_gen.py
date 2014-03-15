@@ -145,17 +145,8 @@ def generate(node, bw):
 	#   modulename1 mod1(RST, ST1, CLK, RD1, SOUT1, rIN0, rIN1, rIN2...);
 	
 	#Generate %IN_MODULES%
-	print("==================================")
-	print(node)
 	in_modules = ""
 	for i in range(0, len(node["arguments"])):
-		print("================")
-		print(node["arguments"])
-		print("================")
-		print(node["static"][i]["arguments"])
-		print("================")
-		print(in_list)
-		print("================")
 		class_name = "root_%s%s"%(node["static"][i]["name"], node["static"][i]["id"])
 		rin_list = make_rinlist(node["static"][i])
 		if rin_list == "":
@@ -170,13 +161,6 @@ def generate(node, bw):
 	class_name = "root_%s%s"%(node["static"][-1]["name"], node["static"][-1]["id"])
 	mode_node = generateRoot.generateRoot(node["static"][-1], bw)
 	treewalk.generateNodes(mode_node, bw)
-	print("================")
-	print(node["arguments"])
-	print("================")
-	print(node["static"][-1]["arguments"])
-	print("================")
-	print(in_list)
-	print("================")
 	rin_list = make_rinlist(node["static"][-1])
 	if rin_list == "":
 		pred_module = "   %s pred(RST, pST, CLK, pRD, pRES);\n"%(class_name)

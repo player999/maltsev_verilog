@@ -7,6 +7,8 @@ module root_tb();
     reg rRST;
     reg rST;
     reg rCLK;
+    reg rd_old;
+    reg [31:0] tick_count;
 %IN_DEF%
     
     root_%NAME% root(RST, ST, CLK, RD, RES%IN_LIST%);
@@ -22,6 +24,7 @@ module root_tb();
         rCLK = 0;
         rRST = 1;
         rST = 0;
+        tick_count = 0;
 %IN_INIT%
         #15 rRST = 0;
         #20 rST = 1;
@@ -29,6 +32,14 @@ module root_tb();
         #%SIM_TIME% $finish;
     end
 
-    always #5 rCLK = !rCLK;
+    always begin
+        #5 rCLK = !rCLK;
+        if ((rd_old == 0) && (RD == 1) && (tick_count > 12)) begin
+            $display("RES= %d",RES);
+            $finish;
+        end
+        tick_count = tick_count + 1;
+        rd_old = RD;
+    end
 
 endmodule

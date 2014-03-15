@@ -8,7 +8,7 @@ all:compile
 	@./$(PROJECT_DIR)/$(TARGET)
 
 compile:clean copy_needed
-	@./treewalk.py
+	@./treewalk.py deleteme.txt [30,7]
 	@dot $(PROJECT_DIR)/$(PRIMITIVE_GRAPH) -Tpng -o $(PROJECT_DIR)/$(PRIMITIVE_IMG)
 	@dot $(PROJECT_DIR)/$(SOURCE_GRAPH) -Tpng -o $(PROJECT_DIR)/$(SOURCE_IMG)
 
