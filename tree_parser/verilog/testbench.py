@@ -19,7 +19,10 @@ def generateTestbench(tree, bw, values, sim_time):
 	in_list = ""
 	for i in range(0,in_count):
 		in_list = in_list + "IN%d, "%i
-	in_list = in_list[:-2]
+	if in_list != "":
+		in_list = ", " + in_list
+		in_list = in_list[:-2]
+
 
 	#%IN_ASSIGN%
 	in_assign = ""

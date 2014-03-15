@@ -5,3 +5,7 @@ ADD	operation_add
 ZERO	operation_o
 ONE	operation_l
 NOP	operation_nop
+MUL	operation_mul
+DIV	operation_div
+SUB	operation_sub
+CONST	operation_const

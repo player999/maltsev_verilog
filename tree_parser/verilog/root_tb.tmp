@@ -9,7 +9,7 @@ module root_tb();
     reg rCLK;
 %IN_DEF%
     
-    root_%NAME% root(RST, ST, CLK, RD, RES, %IN_LIST%);
+    root_%NAME% root(RST, ST, CLK, RD, RES%IN_LIST%);
 
 %IN_ASSIGN%
     assign CLK = rCLK;

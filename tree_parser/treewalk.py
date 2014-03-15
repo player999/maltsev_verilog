@@ -83,4 +83,4 @@ if __name__ == "__main__":
 	text = open("deleteme.txt", "r").read()
 	tree = makeCode(text, 16)
 	print(tree["arguments"])
-	generateTestbench(tree, 16, [32,8], 100000)
+	generateTestbench(tree, 16, [30, 7], 100000)
