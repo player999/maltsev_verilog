@@ -1,0 +1,79 @@
+module %MODULE_NAME%(
+//Inputs
+	RST_I, 
+	CLK_I, 
+	WE_I, 
+	STB_I, 
+	SEL_I,
+	ADR_I, 
+	DAT_I,
+//Outputs
+	DAT_O,
+	IRQ_O
+);
+
+	input RST_I;
+	input CLK_I;
+	input WE_I;
+	input STB_I;
+	input [%NSELBITS%-1:0] SEL_I;
+	input [%DW%-1:0] DAT_I;
+	input [%NADRBITS%-1:0] ADR_I;	
+
+	output [%DW%-1:0] DAT_O;
+	output reg IRQ_O;
+
+	reg [%DW%-1:0] regs[0:%IN_CNT%-1];
+
+	wire RD;
+	reg ST;
+	reg [1:0] complete;
+	reg [2-1:0] adr;
+	reg stb_old;
+	reg stb_edge;
+	reg [3:0] rd_old;
+
+	%INTERNAL_MODULE% themodule(RST_I, ST, CLK_I, RD, DAT_O, %REGISTER_LINE%);
+	
+	always @(posedge CLK_I) begin
+		if(RST_I) begin
+%CLEAR_MODULES%
+			complete = 0;
+			adr = 0;
+			stb_old = 0;
+			stb_edge = 0;
+			IRQ_O = 0;
+			rd_old = 4'b1111;
+		end else begin //ELSE RESET
+			if((STB_I != stb_old) & (stb_old == 0) & (WE_I == 1)) begin
+				stb_edge = 1;
+			end else begin
+				stb_edge = 0;
+			end
+			if(RD == 1 & rd_old == 4'b0001) begin
+				IRQ_O = 1;
+			end else begin
+				if(rd_old == 4'b1111) begin
+					IRQ_O = 0;
+				end // IRQ_O != 1
+			end
+			if(stb_edge) begin
+				ST = 0;
+				if(WE_I) begin
+					if (complete == 0) begin
+						adr = ADR_I;
+					end// END complete == 0
+%FILLING%
+					if(complete == 0 & adr == %IN_CNT% - 1) begin
+						ST = 1;
+					end
+				end
+			end//END SELECTED SLAVE
+			stb_old = STB_I;
+			rd_old[3] = rd_old[2];
+			rd_old[2] = rd_old[1];
+			rd_old[1] = rd_old[0];
+			rd_old[0] = RD;
+		end//END_RESET
+	end//END posedge CLK_I
+endmodule

@@ -1,7 +1,16 @@
 import generateRoot
+import slavegenerator
 import os
 from configs import *
 def generateTestbench(tree, bw, values, sim_time):
+	#################
+	#Generate slaves#
+	#################
+	slavegenerator.create_tcl("accelerator_" + tree["id"], PROJECT_DIR, "root_" + tree["name"] + tree["id"], bw)
+	slavegenerator.create_slave("accelerator_" + tree["id"], PROJECT_DIR, "root_" + tree["name"] + tree["id"], len(values), bw)
+	#################
+	#      END      #
+	#################
 	in_count = len(list(set(generateRoot.makeInputWireList(tree, []))))
 
 	#%NAME%

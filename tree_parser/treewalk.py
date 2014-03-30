@@ -70,7 +70,8 @@ if __name__ == "__main__":
 	random.seed(7)
 	if len(sys.argv) != 3:
 		print("Incorrect arguments")
+		print("filename [arg1,arg2,...]")
 		quit()
 	text = open(sys.argv[1], "r").read()
-	tree = makeCode(text, 16)
-	generateTestbench(tree, 16, eval(sys.argv[2]), 1000000)
+	tree = makeCode(text, 32)
+	generateTestbench(tree, 32, eval(sys.argv[2]), 1000000)

@@ -10,7 +10,7 @@ module node_%MODULENAME%(
    input wire          ST;
    input wire          CLK;
    output reg          RD;
-   output reg [16-1:0] RES;
+   output reg [%BW%-1:0] RES;
 %IN_DEF%
    reg [3:0] 		   state;
    wire [%BW%-1:0] 	   SOUT_YES;
