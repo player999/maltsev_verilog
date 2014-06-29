@@ -1,0 +1,9 @@
+input RST_I;
+input CLK_I;
+input ADR_I;
+input [bw/8-1:0] BE_I;
+input WE_I;
+input [bw-1:0] DAT_I;
+input RD_I;
+output [bw-1:0] DAT_O;
+output WRQ_O=0;
