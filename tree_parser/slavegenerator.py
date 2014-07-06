@@ -31,20 +31,35 @@ def create_slave(slavename, path, modulename, incnt, dw):
 	regs_line = regs_line[:-2]
 	clear_modules=""
 	for i in range(0,incnt):
-		clear_modules = clear_modules + "\t\t\tregs[%i] = 0;\n"%i
-	filling = ""
-	for i in range(0,int(dw / 8)):
-		filling = filling + generate_filling_if(int(dw / 8) - i - 1, dw)
+		clear_modules = clear_modules + "\t\t\tregs[%i] <= 0;\n"%i
+#if (reg1_wr) begin
+#	regs[1] <= DAT_I;
+#	ST <= 1;
+#end
+	filling = "";
+	for i in range(0, incnt):
+		filling = filling + "\t\t\tif (reg%d_wr) begin\n"%(i)
+		filling = filling + "\t\t\t\tregs[%d] <= DAT_I;\n"%(i)
+		if i == incnt-1:
+			filling = filling + "\t\t\t\tST <= 1;\n"
+		else:
+			filling = filling + "\t\t\t\tST <= 0;\n"
+		filling = filling + "\t\t\tend\n"
+	#Register write signels
+	#assign reg1_wr = STB_I && WE_I && (ADR_I == 1);
+	wr_signals = ""
+	for i in range(0, incnt):
+		wr_signals = wr_signals + "\tassign reg%d_wr = STB_I && WE_I && (ADR_I == %d);\n"%(i,i)
 	#Fill template
 	template = open(TEMPLATE, "r").read()
 	template = template.replace("%FILLING%", filling)
 	template = template.replace("%DW%", str(dw))
 	template = template.replace("%IN_CNT%", str(incnt))
-	template = template.replace("%NSELBITS%", str(int(dw/8)))
 	template = template.replace("%NADRBITS%", str(math.ceil(math.log2(incnt))))
 	template = template.replace("%MODULE_NAME%", slavename)
 	template = template.replace("%INTERNAL_MODULE%", modulename)
 	template = template.replace("%REGISTER_LINE%", regs_line)
+	template = template.replace("%WR_SIGNALS%", wr_signals)
 	template = template.replace("%CLEAR_MODULES%", clear_modules)
 	f = open(path + "/" + slavename + ".v", "w")
 	f.write(template)
@@ -55,7 +70,7 @@ def file_entry(path, name):
 	line = "add_fileset_file %s VERILOG PATH %s\n"%(name, "./" + name)
 	return line
 
-def create_tcl(slavename, path, modulename, dw):
+def create_tcl(slavename, path, modulename, incnt, dw):
 	#%BW% %TOP_LEVEL_PATH% %ACCELERATOR_NAME% %ACCELERATOR_DNAME% %AUTHOR_NAME% 
 	TOP_LEVEL_PATH = "./" + slavename + ".v"
 	BW = dw
@@ -70,6 +85,7 @@ def create_tcl(slavename, path, modulename, dw):
 	template = open(TCL_TEMPLATE, "r").read()
 	template = template.replace("%TOP_LEVEL_PATH%", TOP_LEVEL_PATH)
 	template = template.replace("%BW%", str(dw))
+	template = template.replace("%AW%", str(math.ceil(math.log2(incnt))))
 	template = template.replace("%ACCELERATOR_NAME%", ACCELERATOR_NAME)
 	template = template.replace("%ACCELERATOR_DNAME%", ACCELERATOR_DNAME)
 	template = template.replace("%AUTHOR_NAME%", AUTHOR_NAME)
@@ -88,7 +104,7 @@ if __name__ == "__main__":
 	parser.add_argument("--path", type=str, required=True)
   
 	args = parser.parse_args()
-	create_tcl(args.filename, args.path, args.modulename, args.dw)
+	create_tcl(args.filename, args.path, args.modulename, args.incnt, args.dw)
 	create_slave(args.filename, args.path, args.modulename, args.incnt, args.dw)
 
 	

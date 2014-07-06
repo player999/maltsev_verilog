@@ -1,10 +1,2 @@
-#!include arithm.lib
-(MAIN 
-#	(DIV (A B))
-#	(DEC (A))
-#	(SUB (A B))
-#	(MOD (A B))
-#	(GT (A B))
-#	(IF ((NOP (IN0)) (INC (IN0)) (GT (IN0 (DEC (IN1))))) (A B))
-	(ADD (A B))
-)
+
+(MAIN (ADD (IN1 IN2)))
