@@ -2,6 +2,7 @@ MALTSEV ALGEBRA VERILOG IMPLEMENTATION
 ======================================
 Requirements
 ------------
+* GNU/Linux distribution
 * Icarus verilog
 * GCC
 * Python 3
